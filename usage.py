@@ -2,7 +2,6 @@ import spotipy
 from helper import *
 from plexapi.server import PlexServer
 from spotipy.oauth2 import SpotifyClientCredentials
-from datasketch import MinHash
 
 baseurl = 'http://192.168.1.99:32400'
 token = 'WKzzU7zNPRvyDrj6iXyZ'

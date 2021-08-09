@@ -40,7 +40,17 @@ def get_sp_playlist_tracks(sp, userId: str, playlistId: str) -> List:
     return tracks
 
 
-def get_sp_track_names(sp, userId: str, playlistId: str):
+def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
+    """Returns the track names of the given spotify playlist
+
+    Args:
+        sp ([type]): Spotify configured instance
+        userId (str): UserId of the spotify account (get it from open.spotify.com/account)
+        playlistId (str): Playlist URI
+
+    Returns:
+        List: track names
+    """
     trackNames = []
     tracks = get_sp_playlist_tracks(sp, userId, playlistId)
     for track in tracks:
@@ -48,7 +58,17 @@ def get_sp_track_names(sp, userId: str, playlistId: str):
     return trackNames
 
 
-def get_available_plex_tracks(plex: PlexServer, trackNames: List):
+def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
+    """Returns a list of plex.audio.track objects for the given spotify track names 
+        - Empty list if none of the tracks are found in Plex
+
+    Args:
+        plex (PlexServer): A configured PlexServer instance
+        trackNames (List): List of track names
+
+    Returns:
+        List: of track objects
+    """
     musicTracks = []
     for track in trackNames:
         search = []
@@ -62,12 +82,26 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List):
     return musicTracks
 
 
-def create_new_plex_playlist(plex: PlexServer, tracksList, playlistName):
+def create_new_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) -> None:
+    """Creates a new plex playlist with given name and tracks
+
+    Args:
+        plex (PlexServer): A configured PlexServer instance
+        tracksList (List): List of plex.audio.track objects
+        playlistName (str): Name of the playlist
+    """
     logging.info('Created playlist %s' % playlistName)
     plex.createPlaylist(title=playlistName, items=tracksList)
     logging.info('%s created' % playlistName)
 
-def create_plex_playlist(plex: PlexServer, tracksList, playlistName):
+def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) -> None:
+    """Deletes existing playlist (if exists) and creates a new playlist with given name and playlist name
+
+    Args:
+        plex (PlexServer): A configured PlexServer instance
+        tracksList (List):List of plex.audio.track objects
+        playlistName (str): Name of the playlist
+    """
     try:
         plexPlaylist = plex.playlist(playlistName)
         plexPlaylist.delete()
