@@ -1,10 +1,9 @@
-from plexapi.server import PlexServer
-import spotipy
-from spotipy import Spotify
-from typing import List
 import logging
-from plexapi.audio import Track
+from typing import List
 
+import spotipy
+from plexapi.exceptions import NotFound
+from plexapi.server import PlexServer
 
 
 def get_sp_user_playlists(sp: spotipy.Spotify, userId: str):
@@ -45,7 +44,7 @@ def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
 
     Args:
         sp ([type]): Spotify configured instance
-        userId (str): UserId of the spotify account (get it from open.spotify.com/account)
+        userId (str): UserId of the spotify account
         playlistId (str): Playlist URI
 
     Returns:
@@ -59,7 +58,7 @@ def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
 
 
 def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
-    """Returns a list of plex.audio.track objects for the given spotify track names 
+    """For the given spotify track names returns a list of plex.audio.track objects
         - Empty list if none of the tracks are found in Plex
 
     Args:
@@ -74,9 +73,10 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
         search = []
         search = plex.search(track, mediatype='track', limit=1)
         if not search:
-            search = plex.search(track.split('(')[0], mediatype='track', limit=1)
+            search = plex.search(track.split(
+                '(')[0], mediatype='track', limit=1)
         if search and (search[0].title[:3].lower() != track[:3].lower()):
-            search = [] 
+            search = []
         if search:
             musicTracks.extend(search)
     return musicTracks
@@ -94,6 +94,7 @@ def create_new_plex_playlist(plex: PlexServer, tracksList: List, playlistName: s
     plex.createPlaylist(title=playlistName, items=tracksList)
     logging.info('%s created' % playlistName)
 
+
 def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) -> None:
     """Deletes existing playlist (if exists) and creates a new playlist with given name and playlist name
 
@@ -105,7 +106,10 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) 
     try:
         plexPlaylist = plex.playlist(playlistName)
         plexPlaylist.delete()
+        logging.warn("Deleted existing playlist %s" % playlistName)
         create_new_plex_playlist(plex, tracksList, playlistName)
-    except:
+        logging.warn("Created playlist %s" % playlistName)
+
+    except NotFound:
         create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.warn("Failed to create playlist %s" % playlistName)
+        logging.warn("Created playlist %s" % playlistName)
