@@ -1,0 +1,2 @@
+spotipy>=2.18.0
+plexapi>=4.7.0
