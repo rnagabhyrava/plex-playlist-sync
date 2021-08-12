@@ -1,8 +1,9 @@
 import logging
 from typing import List
 
+import deezer
 import spotipy
-from plexapi.exceptions import NotFound
+from plexapi.exceptions import BadRequest, NotFound
 from plexapi.server import PlexServer
 
 
@@ -57,6 +58,21 @@ def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
     return trackNames
 
 
+def get_deez_playlist_track_names(deezer: deezer.Client(), playlistId: str) -> List:
+    """Returns the track names of the given deezer playlist Id
+
+    Args:
+        deezer (deezer.Client): Deezer Client (no credentials needed)
+        playlistId (str): Playlist ID
+
+    Returns:
+        List: track names
+    """
+    trackNames = []
+    tracks = deezer.get_playlist(playlistId).tracks
+    return [track.title for track in tracks]
+
+
 def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
     """For the given spotify track names returns a list of plex.audio.track objects
         - Empty list if none of the tracks are found in Plex
@@ -70,15 +86,20 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
     """
     musicTracks = []
     for track in trackNames:
-        search = []
-        search = plex.search(track, mediatype='track', limit=1)
+        try:
+            search = plex.search(track, mediatype='track', limit=1)
+        except BadRequest:
+            logging.warn("failed to search %s" % track)
+            search = []
         if not search:
-            search = plex.search(track.split(
-                '(')[0], mediatype='track', limit=1)
-        if search and (search[0].title[:3].lower() != track[:3].lower()):
+            search = plex.search(
+                track.split('(')[0], mediatype='track', limit=1
+            )
+        if search and (search[0].title[0].lower() != track[0].lower()):
             search = []
         if search:
             musicTracks.extend(search)
+            search = []
     return musicTracks
 
 
