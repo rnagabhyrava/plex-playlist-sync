@@ -1,3 +1,6 @@
+import os
+import time
+
 import deezer
 import spotipy
 from plexapi.server import PlexServer
@@ -5,40 +8,53 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from helper import *
 
-baseurl = 'http://192.168.1.99:32400'
-token = '_oiMrxQaAc-LdBosBWyb'
-plex = PlexServer(baseurl, token)
+PLEX_URL = os.environ.get('PLEX_URL')
+PLEX_TOKEN = os.environ.get('PLEX_TOKEN')
 
-# TODO: Set as env variables"
-SPOTIPY_CLIENT_ID = "0d5191aca40a4c5d8d8d994c17fc0802"
-SPOTIPY_CLIENT_SECRET = "0bdfaf1e33ed415296129bde0890b065"
-USER_ID = "pe1myvbjlnx1i5eqw1e8k09h7"
-SCOPE = "user-library-read"
+SPOTIPY_CLIENT_ID = os.environ.get('SPOTIPY_CLIENT_ID')
+SPOTIPY_CLIENT_SECRET = os.environ.get('SPOTIPY_CLIENT_SECRET')
+SPOTIFY_USER_ID = os.environ.get('SPOTIFY_USER_ID')
 
+WAIT_SECONDS = int(os.environ.get('SECONDS_TO_WAIT'))
 auth_manager = SpotifyClientCredentials(
-    client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
+    client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET
+)
 
+plex = PlexServer(PLEX_URL, PLEX_TOKEN)
 sp = spotipy.Spotify(auth_manager=auth_manager)
-deezer = deezer.Client()
+deez = deezer.Client()
 
 # sp playlists
-sp_playlists = get_sp_user_playlists(sp=sp, userId=USER_ID)
+sp_playlists = get_sp_user_playlists(sp=sp, userId=SPOTIFY_USER_ID)
 
 # deezer playlists
-deez_playlist_ids = ['6614423884', '1313621735', '3155776842']
+deez_playlist_ids = os.environ.get('DEEZER_PLAYLIST_ID').split()
 deez_playlist_titles = [
-    deezer.get_playlist(code).title for code in deez_playlist_ids
+    deez.get_playlist(code).title for code in deez_playlist_ids
 ]
 deez_playlists = zip(deez_playlist_ids, deez_playlist_titles)
 
-for playlist, name in sp_playlists:
-    track_names = get_sp_track_names(sp, USER_ID, playlist)
-    trackList = get_available_plex_tracks(plex, track_names)
-    create_plex_playlist(plex, tracksList=trackList,
-                         playlistName="Spotify "+name)
+if not sp_playlists:
+    logging.error("No spotify playlists found for given user")
 
-for playlist, name in deez_playlists:
-    track_names = get_deez_playlist_track_names(deezer, playlist)
-    trackList = get_available_plex_tracks(plex, track_names)
-    create_plex_playlist(plex, tracksList=trackList,
-                         playlistName="Deezer "+name)
+if not deez_playlist_ids:
+    logging.error("No deezer playlist code(s) found")
+
+
+while True:
+    logging.info("Starting playlist sync")
+    for playlist, name in sp_playlists:
+        track_names = get_sp_track_names(sp, SPOTIFY_USER_ID, playlist)
+        trackList = get_available_plex_tracks(plex, track_names)
+        create_plex_playlist(plex, tracksList=trackList,
+                             playlistName="Spotify "+name)
+
+    for playlist, name in deez_playlists:
+        track_names = get_deez_playlist_track_names(deez, playlist)
+        trackList = get_available_plex_tracks(plex, track_names)
+        create_plex_playlist(plex, tracksList=trackList,
+                             playlistName="Deezer "+name)
+
+    logging.info("playlist sync complete")
+    logging.info("sleeping for %s seconds" % WAIT_SECONDS)
+    time.sleep(WAIT_SECONDS)

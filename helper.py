@@ -127,10 +127,14 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) 
     try:
         plexPlaylist = plex.playlist(playlistName)
         plexPlaylist.delete()
-        logging.warn("Deleted existing playlist %s" % playlistName)
+        logging.info("Deleted existing playlist %s" % playlistName)
         create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.warn("Created playlist %s" % playlistName)
+        logging.info("Created playlist %s" % playlistName)
 
     except NotFound:
         create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.warn("Created playlist %s" % playlistName)
+        logging.info("Created playlist %s" % playlistName)
+
+
+def sync():
+    pass
