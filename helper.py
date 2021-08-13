@@ -68,7 +68,6 @@ def get_deez_playlist_track_names(deezer: deezer.Client(), playlistId: str) -> L
     Returns:
         List: track names
     """
-    trackNames = []
     tracks = deezer.get_playlist(playlistId).tracks
     return [track.title for track in tracks]
 
