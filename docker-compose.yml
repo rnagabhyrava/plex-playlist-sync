@@ -1,0 +1,19 @@
+---
+version: "2.1"
+services:
+  playlistSync:
+    image: 
+    container_name: playlistSync
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - PLEX_URL="http://192.168.1.99:32400"
+      - PLEX_TOKEN="_oiMrxQaAc-LdBosBWyb"
+      - SPOTIPY_CLIENT_ID="0d5191aca40a4c5d8d8d994c17fc0802"
+      - SPOTIPY_CLIENT_SECRET="0bdfaf1e33ed415296129bde0890b065"
+      - SPOTIFY_USER_ID="pe1myvbjlnx1i5eqw1e8k09h7"
+      - DEEZER_PLAYLIST_ID="6614423884 1313621735 3155776842"
+      - SECONDS_TO_WAIT=84000
+    volumes:
+      - /mnt/ssd1/plexsync/app:/app
+    restart: unless-stopped
