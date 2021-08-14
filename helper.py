@@ -139,7 +139,3 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) 
     except NotFound:
         create_new_plex_playlist(plex, tracksList, playlistName)
         logging.info("Created playlist %s" % playlistName)
-
-
-def sync():
-    pass
