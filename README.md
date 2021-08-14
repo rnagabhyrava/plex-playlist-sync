@@ -5,7 +5,7 @@ Sync your spotify, deezer playlists to plex.
 * From Spotify: Syncs all your spotify playlists to plex
 * From Deezer: Syncs given playlist IDs to plex
 
-## Configurations 
+## Configurations needed
 ### Plex
 * Your plex url
 * plex toekn
