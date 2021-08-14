@@ -93,6 +93,7 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
         except BadRequest:
             logging.info("failed to search %s" % track)
             search = []
+            logging.info("searching %s with string before (" % track)
         if not search:
             search = plex.search(
                 track.split('(')[0], mediatype='track', limit=5
