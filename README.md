@@ -1,2 +1,6 @@
-# Spotify2Plex
-A simple script to convert a spotify playlist into plex playlist. 
+# Plex Playlist Sync
+Sync your spotify, deezer playlists to plex.
+
+## Configurations 
+### Spotify
+* Requires spotify client ID and client secret
