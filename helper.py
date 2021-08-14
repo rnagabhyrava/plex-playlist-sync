@@ -1,10 +1,13 @@
 import logging
+import sys
 from typing import List
 
 import deezer
 import spotipy
 from plexapi.exceptions import BadRequest, NotFound
 from plexapi.server import PlexServer
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def get_sp_user_playlists(sp: spotipy.Spotify, userId: str):
@@ -86,19 +89,24 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
     musicTracks = []
     for track in trackNames:
         try:
-            search = plex.search(track, mediatype='track', limit=1)
+            search = plex.search(track, mediatype='track', limit=5)
         except BadRequest:
-            logging.warn("failed to search %s" % track)
+            logging.info("failed to search %s" % track)
             search = []
         if not search:
             search = plex.search(
-                track.split('(')[0], mediatype='track', limit=1
+                track.split('(')[0], mediatype='track', limit=5
             )
-        if search and (search[0].title[0].lower() != track[0].lower()):
-            search = []
         if search:
-            musicTracks.extend(search)
-            search = []
+            for s in search:
+                try:
+                    if s.title.split()[0].lower() == track.split()[0].lower():
+                        musicTracks.extend(s)
+                        break
+
+                except IndexError:
+                    logging.info(
+                        "Looks like plex mismatched the search for %s, retrying with next query" % track)
     return musicTracks
 
 
@@ -110,9 +118,7 @@ def create_new_plex_playlist(plex: PlexServer, tracksList: List, playlistName: s
         tracksList (List): List of plex.audio.track objects
         playlistName (str): Name of the playlist
     """
-    logging.info('Created playlist %s' % playlistName)
     plex.createPlaylist(title=playlistName, items=tracksList)
-    logging.info('%s created' % playlistName)
 
 
 def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) -> None:
