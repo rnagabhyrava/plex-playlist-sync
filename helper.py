@@ -44,7 +44,7 @@ def get_sp_playlist_tracks(sp, userId: str, playlistId: str) -> List:
 
 
 def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
-    """Returns the track names of the given spotify playlist
+    """Returns the track names, artists of the given spotify playlist
 
     Args:
         sp ([type]): Spotify configured instance
@@ -52,30 +52,36 @@ def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
         playlistId (str): Playlist URI
 
     Returns:
-        List: track names
+        zip(list, list): A zip object of track name and corresponding artist
     """
-    trackNames = []
+    trackNames, artistNames = [], []
     tracks = get_sp_playlist_tracks(sp, userId, playlistId)
     for track in tracks:
         trackNames.append(track['track']['name'])
-    return trackNames
+        artistNames.append(track['track']['artists'][0]['name'])
+    return zip(trackNames, artistNames)
 
 
 def get_deez_playlist_track_names(deezer: deezer.Client(), playlistId: str) -> List:
-    """Returns the track names of the given deezer playlist Id
+    """Returns the track names, artists of the given deezer playlist Id
 
     Args:
         deezer (deezer.Client): Deezer Client (no credentials needed)
         playlistId (str): Playlist ID
 
     Returns:
-        List: track names
+        zip(list, list): A zip object of track name and corresponding artist
     """
+    trackNames, artistNames = [], []
     tracks = deezer.get_playlist(playlistId).tracks
-    return [track.title for track in tracks]
+    for track in tracks:
+        trackNames.append(track.title)
+        artistNames.append(track.artist.name)
+
+    return zip(trackNames, artistNames)
 
 
-def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
+def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
     """For the given spotify track names returns a list of plex.audio.track objects
         - Empty list if none of the tracks are found in Plex
 
@@ -87,7 +93,7 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
         List: of track objects
     """
     musicTracks = []
-    for track in trackNames:
+    for track, artist in trackZip:
         try:
             search = plex.search(track, mediatype='track', limit=5)
         except BadRequest:
@@ -100,7 +106,7 @@ def get_available_plex_tracks(plex: PlexServer, trackNames: List) -> List:
         if search:
             for s in search:
                 try:
-                    if s.title.split()[0].lower() == track.split()[0].lower():
+                    if s.artist().title.lower() == artist.lower():
                         musicTracks.extend(s)
                         break
 
