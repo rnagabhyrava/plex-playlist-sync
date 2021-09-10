@@ -14,7 +14,5 @@ services:
       - SPOTIPY_CLIENT_SECRET=<your spotify client secret>
       - SPOTIFY_USER_ID=<your spotify user id>
       - DEEZER_PLAYLIST_ID=<deezer playlist ids space seperated>
-      - SECONDS_TO_WAIT=84000
-    volumes:
-      - /app:/mnt/ssd1/plexsync/app
+      - SECONDS_TO_WAIT=84000 # in seconds
     restart: unless-stopped
