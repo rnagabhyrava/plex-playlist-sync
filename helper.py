@@ -9,6 +9,8 @@ from plexapi.server import PlexServer
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
+################### Spotify helpers ###################
+
 
 def get_sp_user_playlists(sp: spotipy.Spotify, userId: str):
     """Gets all the playlist URIs for the given userId
@@ -18,13 +20,13 @@ def get_sp_user_playlists(sp: spotipy.Spotify, userId: str):
         userId (str): UserId of the spotify account (get it from open.spotify.com/account)
 
     Returns:
-        list[str]: list of URIs
+        tuple(list[str], list[str]): list of URIs, list of playlist names
     """
     playlists = sp.user_playlists(userId)
-    return ([(playlist['uri'], playlist['name']) for playlist in playlists['items']])
+    return ([[playlist['uri'], playlist['name']] for playlist in playlists['items']])
 
 
-def get_sp_playlist_tracks(sp, userId: str, playlistId: str) -> List:
+def get_sp_playlist_tracks(sp, userId: str, playlistId: str):
     """Gets tracks in a given playlist
 
     Args:
@@ -43,7 +45,7 @@ def get_sp_playlist_tracks(sp, userId: str, playlistId: str) -> List:
     return tracks
 
 
-def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
+def get_sp_track_names(sp, userId: str, playlistId: str):
     """Returns the track names, artists of the given spotify playlist
 
     Args:
@@ -62,7 +64,43 @@ def get_sp_track_names(sp, userId: str, playlistId: str) -> List:
     return zip(trackNames, artistNames)
 
 
-def get_deez_playlist_track_names(deezer: deezer.Client(), playlistId: str) -> List:
+################### Deezer helpers ###################
+
+
+def get_dz_user_playlists(dz: deezer.Client(), userId: str):
+    """Gets all the Deezer playlist URIs, title for the given userId
+
+    Args:
+        dz (deezer.Client): Deezer Client (no credentials needed)
+        userId (str): UserId of the Deezer account (get it from url of deezer.com -> user profile)
+
+    Returns:
+        tuple(list[str], list[str]): list of URIs, list of playlist names
+    """
+    playlists = dz.get_user(userId).get_playlists()
+    return ([[playlist.id, playlist.title] for playlist in playlists])
+
+
+def get_dz_playlists_by_ids(dz: deezer.Client(), playlistIds: str):
+    """Gets all the Deezer playlist URIs, title for the given palylistsIds(space separated)
+
+    Args:
+        dz (deezer.Client): Deezer Client (no credentials needed)
+        playlistIds (str): Space separated playlist Ids 
+
+    Returns:
+        tuple(list[str], list[str]): list of URIs, list of playlist names
+    """
+    dz_playlist_ids = playlistIds.split()
+
+    playlists = [
+        dz.get_playlist(id) for id in dz_playlist_ids
+    ]
+
+    return ([[playlist.id, playlist.title] for playlist in playlists])
+
+
+def get_dz_playlist_track_names(dz: deezer.Client(), playlistId: str):
     """Returns the track names, artists of the given deezer playlist Id
 
     Args:
@@ -73,12 +111,15 @@ def get_deez_playlist_track_names(deezer: deezer.Client(), playlistId: str) -> L
         zip(list, list): A zip object of track name and corresponding artist
     """
     trackNames, artistNames = [], []
-    tracks = deezer.get_playlist(playlistId).tracks
+    tracks = dz.get_playlist(playlistId).tracks
     for track in tracks:
         trackNames.append(track.title)
         artistNames.append(track.artist.name)
 
     return zip(trackNames, artistNames)
+
+
+################### Playlist Creation helpers ###################
 
 
 def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
@@ -97,9 +138,9 @@ def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
         try:
             search = plex.search(track, mediatype='track', limit=5)
         except BadRequest:
-            logging.info("failed to search %s" % track)
+            logging.info("failed to search %s", track)
             search = []
-            logging.info("searching %s with string before (" % track)
+            logging.info("searching %s with string before (", track)
         if not search:
             search = plex.search(
                 track.split('(')[0], mediatype='track', limit=5
@@ -113,7 +154,7 @@ def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
 
                 except IndexError:
                     logging.info(
-                        "Looks like plex mismatched the search for %s, retrying with next query" % track)
+                        "Looks like plex mismatched the search for %s, retrying with next query", track)
     return musicTracks
 
 
@@ -139,10 +180,10 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) 
     try:
         plexPlaylist = plex.playlist(playlistName)
         plexPlaylist.delete()
-        logging.info("Deleted existing playlist %s" % playlistName)
+        logging.info("Deleted existing playlist %s", playlistName)
         create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.info("Created playlist %s" % playlistName)
+        logging.info("Created playlist %s", playlistName)
 
     except NotFound:
         create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.info("Created playlist %s" % playlistName)
+        logging.info("Created playlist %s", playlistName)
