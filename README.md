@@ -1,22 +1,22 @@
 # Plex Playlist Sync
 
-Gets your spotify and/or deezer playlist(s) and creates playlist(s) in plex with media already available on your plex. This DOES NOT download any songs from anywhere.
+Gets an accounts spotify and/or deezer playlist(s) and creates playlist(s) in plex with media already available on plex server. This DOES NOT download any songs from anywhere.
 
 ## Features
-* From Spotify: Sync all your public playlists to plex
-* From Deezer: Sync all your public playlists and/or any given playlist IDs to plex
+* From Spotify: Sync all of the given user account's public playlists to plex
+* From Deezer: Sync all of the given user account's public playlists and/or any given public playlist IDs to plex
 
 ## Prerequisites
 ### Plex
-* Your plex url
-* plex token
+* Plex server's host and port
+* Plex token - [Don't know where to find it?](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
 
 ### To use Spotify sync
 * Spotify client ID and client secret - Can be obtained from [spotify developer](https://developer.spotify.com/dashboard/login)
-* Spotify user ID - This can be found on your [account page](https://www.spotify.com/us/account/overview/)
+* Spotify user ID - This can be found on spotify [account page](https://www.spotify.com/us/account/overview/)
 
 ### To use Deezer sync
-* Deezer profile ID of the account you want to sync
+* Deezer profile ID of the account from which playlists need to sync from
   * Login to deezer.com
   * Click on your profile
   * Grab the profile ID from the URLCancel changes
@@ -26,7 +26,7 @@ OR
   *  Example: https://www.deezer.com/us/playlist/1313621735 - Here 1313621735 is the playlist ID
 
 ## Docker Setup
-You need either docker or docker with docker-compose to run this.
+You need either docker or docker with docker-compose to run this. Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optinal (1,2,3) fields are required.
 
 ### Docker Run (Untested)
 
@@ -68,3 +68,6 @@ And run with :
 ```
 docker-compose up
 ```
+
+### Issues
+Something's off? See room for improvement? Feel free to open an issue with as much info as possible. Cheers!
