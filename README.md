@@ -50,7 +50,7 @@ docker run -d \
 
 ### Docker Compose
 
-docker-compose.yml can be configured as follows. See docker-compose-example.yml for example
+docker-compose.yml can be configured as follows. See [docker-compose-example.yml](https://github.com/rnagabhyrava/plex-playlist-sync/blob/main/docker-compose-example.yml) for example
 ```
 version: "2.1"
 services:
