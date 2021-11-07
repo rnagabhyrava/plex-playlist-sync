@@ -20,30 +20,51 @@ Gets your spotify and/or deezer playlist(s) and creates playlist(s) in plex with
   * Login to deezer.com
   * Click on your profile
   * Grab the profile ID from the URLCancel changes
-  *  https://www.deezer.com/us/profile/9999999 - Here 9999999 is the profile ID
+  *  Example: https://www.deezer.com/us/profile/9999999 - Here 9999999 is the profile ID
+OR
+* Get playlists IDs of playlists you want to sync
+  *  Example: https://www.deezer.com/us/playlist/1313621735 - Here 1313621735 is the playlist ID
 
 ## Docker Setup
 You need either docker or docker with docker-compose to run this.
 
-### Docker Run
+### Docker Run (Untested)
 
+```
+docker run -d \
+  --name=playlistSync \
+  -e PLEX_URL= <your local plex url> \
+  -e PLEX_TOKEN=<your plex token> \
+  -e SPOTIPY_CLIENT_ID=<your spotify client id> # Optional 1 \
+  -e SPOTIPY_CLIENT_SECRET=<your spotify client secret> # Optional 1 \
+  -e DEEZER_USER_ID=<your spotify user id> # Optional 2 \
+  -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Optional 3
+  -e SECONDS_TO_WAIT=84000 # Seconds to wait between syncs
+  --restart unless-stopped \
+  rnagabhyrava/plexplaylistsync:latest
+```
 
 ### Docker Compose
+
+docker-compose.yml can be configured as follows. See docker-compose-example.yml for example
 ```
 version: "2.1"
 services:
   playlistSync:
-    image: genzboomer9/plexplaylistsync:latest
+    image: rnagabhyrava/plexplaylistsync:latest
     container_name: playlistSync
     environment:
       - PLEX_URL= <your local plex url>
       - PLEX_TOKEN=<your plex token>
-      - SPOTIPY_CLIENT_ID=<your spotify client id>
-      - SPOTIPY_CLIENT_SECRET=<your spotify client secret>
-      - SPOTIFY_USER_ID=<your spotify user id>
-      - DEEZER_USER_ID=<your spotify user id>
-      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
-      - SECONDS_TO_WAIT=84000
+      - SPOTIPY_CLIENT_ID=<your spotify client id> # Optional 1
+      - SPOTIPY_CLIENT_SECRET=<your spotify client secret> # Optional 1
+      - SPOTIFY_USER_ID=<your spotify user id> # Optional 1
+      - DEEZER_USER_ID=<your spotify user id> # Optional 2
+      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Optional 3
+      - SECONDS_TO_WAIT=84000 # Seconds to wait between syncs
     restart: unless-stopped
 ```
-adas
+And run with :
+```
+docker-compose up
+```
