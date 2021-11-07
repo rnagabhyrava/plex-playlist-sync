@@ -2,7 +2,7 @@
 version: "2.1"
 services:
   playlistSync:
-    image: genzboomer9/plexplaylistsync:latest
+    image: rnagabhyrava/plexplaylistsync:latest
     container_name: playlistSync
     environment:
       - PLEX_URL=http://192.99.99.99:32400
