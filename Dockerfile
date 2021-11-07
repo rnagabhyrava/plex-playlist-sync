@@ -12,4 +12,4 @@ WORKDIR /app
 
 CMD ["python", "usage.py"]
 
-# docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t genzboomer9/plexplaylistsync:<tag> --push .
+# docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t rnagabhyrava/plexplaylistsync:<tag> --push .
