@@ -7,10 +7,10 @@ services:
     environment:
       - PLEX_URL=http://192.99.99.99:32400
       - PLEX_TOKEN=qwertyuiop
-      - SPOTIFY_CLIENT_ID=qwertyuiop # Optional
-      - SPOTIFY_CLIENT_SECRET=qwertyuiop # Optional
-      - SPOTIFY_USER_ID=qwertyuiop # Optional
-      - DEEZER_USER_ID=9999999999 # Optional
-      - DEEZER_PLAYLIST_ID=1313621735 1963962142 # Optional
+      - SPOTIFY_CLIENT_ID=qwertyuiop # Optional 1
+      - SPOTIFY_CLIENT_SECRET=qwertyuiop # Optional 1
+      - SPOTIFY_USER_ID=qwertyuiop # Optional 1
+      - DEEZER_USER_ID=9999999999 # Optional 2
+      - DEEZER_PLAYLIST_ID=1313621735 1963962142 # Optional 3
       - SECONDS_TO_WAIT=86400
     restart: unless-stopped
