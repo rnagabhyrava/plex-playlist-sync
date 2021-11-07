@@ -1,4 +1,8 @@
 # Plex Playlist Sync
+# What this is NOT
+* Does NOT download any songs from anywhere
+* 
+
 Sync your spotify, deezer playlists to plex.
 
 ## Features
