@@ -29,3 +29,21 @@ You need either docker or docker with docker-compose to run this.
 
 
 ### Docker Compose
+```
+version: "2.1"
+services:
+  playlistSync:
+    image: genzboomer9/plexplaylistsync:latest
+    container_name: playlistSync
+    environment:
+      - PLEX_URL= <your local plex url>
+      - PLEX_TOKEN=<your plex token>
+      - SPOTIPY_CLIENT_ID=<your spotify client id>
+      - SPOTIPY_CLIENT_SECRET=<your spotify client secret>
+      - SPOTIFY_USER_ID=<your spotify user id>
+      - DEEZER_USER_ID=<your spotify user id>
+      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
+      - SECONDS_TO_WAIT=84000
+    restart: unless-stopped
+```
+adas
