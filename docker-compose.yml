@@ -4,15 +4,13 @@ services:
   playlistSync:
     image: genzboomer9/plexplaylistsync:latest
     container_name: playlistSync
-    network_mode: host
     environment:
-      - PUID=1000
-      - PGID=1000
       - PLEX_URL= <your local plex url>
       - PLEX_TOKEN=<your plex token>
       - SPOTIPY_CLIENT_ID=<your spotify client id>
       - SPOTIPY_CLIENT_SECRET=<your spotify client secret>
       - SPOTIFY_USER_ID=<your spotify user id>
-      - DEEZER_PLAYLIST_ID=<deezer playlist ids space seperated>
-      - SECONDS_TO_WAIT=84000 # in seconds
+      - DEEZER_USER_ID=<your spotify user id>
+      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
+      - SECONDS_TO_WAIT=84000
     restart: unless-stopped
