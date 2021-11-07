@@ -7,8 +7,8 @@ services:
     environment:
       - PLEX_URL=http://192.99.99.99:32400
       - PLEX_TOKEN=qwertyuiop
-      - SPOTIPY_CLIENT_ID=qwertyuiop # Optional
-      - SPOTIPY_CLIENT_SECRET=qwertyuiop # Optional
+      - SPOTIFY_CLIENT_ID=qwertyuiop # Optional
+      - SPOTIFY_CLIENT_SECRET=qwertyuiop # Optional
       - SPOTIFY_USER_ID=qwertyuiop # Optional
       - DEEZER_USER_ID=9999999999 # Optional
       - DEEZER_PLAYLIST_ID=1313621735 1963962142 # Optional

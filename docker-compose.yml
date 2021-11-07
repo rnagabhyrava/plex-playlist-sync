@@ -7,8 +7,8 @@ services:
     environment:
       - PLEX_URL= <your local plex url>
       - PLEX_TOKEN=<your plex token>
-      - SPOTIPY_CLIENT_ID=<your spotify client id>
-      - SPOTIPY_CLIENT_SECRET=<your spotify client secret>
+      - SPOTIFY_CLIENT_ID=<your spotify client id>
+      - SPOTIFY_CLIENT_SECRET=<your spotify client secret>
       - SPOTIFY_USER_ID=<your spotify user id>
       - DEEZER_USER_ID=<your spotify user id>
       - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
