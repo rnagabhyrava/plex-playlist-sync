@@ -21,7 +21,7 @@ DEEZER_PLAYLIST_IDS = os.environ.get('DEEZER_PLAYLIST_ID')
 
 WAIT_SECONDS = int(os.environ.get('SECONDS_TO_WAIT'))
 
-spAuthSuccess = False
+SPAUTHSUCCESS = False
 
 
 def auth_spotify(client_id: str, client_secret: str):
@@ -51,14 +51,14 @@ while True:
     if SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET and SPOTIFY_USER_ID:
         try:
             sp = auth_spotify(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET)
-            spAuthSuccess = True
+            SPAUTHSUCCESS = True
         except:
             logging.info("Spotify Authorization error, skipping spotify sync")
 
     dz = deezer.Client()
 
     # spotify playlists
-    if spAuthSuccess:
+    if SPAUTHSUCCESS:
         logging.info("Starting spotify playlist sync")
         try:
             sp_playlists = get_sp_user_playlists(sp=sp, userId=SPOTIFY_USER_ID)
