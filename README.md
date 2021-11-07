@@ -28,7 +28,9 @@ OR
   *  Example: https://www.deezer.com/us/playlist/1313621735 - Here 1313621735 is the playlist ID
 
 ## Docker Setup
-You need either docker or docker with docker-compose to run this. Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optinal (1,2,3) fields are required.
+You need either docker or docker with docker-compose to run this. Docker images are available for amd64, arm64 and arm/v7 and will be auto pulled based on your platform.
+
+Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optinal (1,2,3) fields are required.
 
 ### Docker Run (Untested)
 
