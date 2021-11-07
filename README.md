@@ -21,3 +21,11 @@ Gets your spotify and/or deezer playlist(s) and creates playlist(s) in plex with
   * Click on your profile
   * Grab the profile ID from the URLCancel changes
   *  https://www.deezer.com/us/profile/9999999 - Here 9999999 is the profile ID
+
+## Docker Setup
+You need either docker or docker with docker-compose to run this.
+
+### Docker Run
+
+
+### Docker Compose
