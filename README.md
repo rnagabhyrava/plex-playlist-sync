@@ -1,18 +1,49 @@
 # Plex Playlist Sync
-Sync your spotify, deezer playlists to plex.
+
+Gets your spotify and/or deezer playlist(s) and creates playlist(s) in plex with media already available on your plex. This DOES NOT download any songs from anywhere.
 
 ## Features
-* From Spotify: Syncs all your spotify playlists to plex
-* From Deezer: Syncs given playlist IDs to plex
+* From Spotify: Sync all your public playlists to plex
+* From Deezer: Sync all your public playlists and/or any given playlist IDs to plex
 
-## Configurations needed
+## Prerequisites
 ### Plex
 * Your plex url
-* plex toekn
+* plex token
 
-### Spotify
-* Spotify client ID and client secret - Can be obtained from [spotify developer](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwi_9bCygbHyAhXbG80KHQjmCT0QFnoECAkQAw&url=https%3A%2F%2Fdeveloper.spotify.com%2Fdashboard%2F&usg=AOvVaw3zu9Io8tYd2ulT_6rKNkyc)
-* Spotify user id/name - This can be found on your account page
+### To use Spotify sync
+* Spotify client ID and client secret - Can be obtained from [spotify developer](https://developer.spotify.com/dashboard/login)
+* Spotify user ID - This can be found on your [account page](https://www.spotify.com/us/account/overview/)
 
-### Deezer
-* No special configuration needed.
+### To use Deezer sync
+* Deezer profile ID of the account you want to sync
+  * Login to deezer.com
+  * Click on your profile
+  * Grab the profile ID from the URLCancel changes
+  *  https://www.deezer.com/us/profile/9999999 - Here 9999999 is the profile ID
+
+## Docker Setup
+You need either docker or docker with docker-compose to run this.
+
+### Docker Run
+
+
+### Docker Compose
+```
+version: "2.1"
+services:
+  playlistSync:
+    image: genzboomer9/plexplaylistsync:latest
+    container_name: playlistSync
+    environment:
+      - PLEX_URL= <your local plex url>
+      - PLEX_TOKEN=<your plex token>
+      - SPOTIPY_CLIENT_ID=<your spotify client id>
+      - SPOTIPY_CLIENT_SECRET=<your spotify client secret>
+      - SPOTIFY_USER_ID=<your spotify user id>
+      - DEEZER_USER_ID=<your spotify user id>
+      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
+      - SECONDS_TO_WAIT=84000
+    restart: unless-stopped
+```
+adas
