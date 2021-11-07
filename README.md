@@ -11,9 +11,10 @@ Gets your spotify and/or deezer playlist(s) and creates playlist(s) in plex with
 * Your plex url
 * plex token
 
-### Spotify
+### To use Spotify sync
 * Spotify client ID and client secret - Can be obtained from [spotify developer](https://developer.spotify.com/dashboard/login)
-* Spotify user id/name - This can be found on your account page
+* Spotify user ID - This can be found on your [account page](https://www.spotify.com/us/account/overview/)
 
-### Deezer
-* No special configuration needed.
+### To use Deezer sync
+* Deezer profile ID of the account you want to sync, 
+  * Go to deezer.com login -> Account page -> 
