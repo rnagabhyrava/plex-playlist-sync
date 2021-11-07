@@ -21,6 +21,8 @@ DEEZER_PLAYLIST_IDS = os.environ.get('DEEZER_PLAYLIST_ID')
 
 WAIT_SECONDS = int(os.environ.get('SECONDS_TO_WAIT'))
 
+spAuthSuccess = False
+
 
 def auth_spotify(client_id: str, client_secret: str):
     """Creates a spotify authenticator
@@ -46,12 +48,11 @@ while True:
             logging.error("Plex Authorization error")
             break
 
-    if SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET:
+    if SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET and SPOTIFY_USER_ID:
         try:
             sp = auth_spotify(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET)
             spAuthSuccess = True
         except:
-            spAuthSuccess = False
             logging.info("Spotify Authorization error, skipping spotify sync")
 
     dz = deezer.Client()
@@ -59,7 +60,11 @@ while True:
     # spotify playlists
     if spAuthSuccess:
         logging.info("Starting spotify playlist sync")
-        sp_playlists = get_sp_user_playlists(sp=sp, userId=SPOTIFY_USER_ID)
+        try:
+            sp_playlists = get_sp_user_playlists(sp=sp, userId=SPOTIFY_USER_ID)
+        except:
+            logging.error("Spotify User ID Error")
+            sp_playlists = []
 
         if not sp_playlists:
             logging.error("No spotify playlists found for given user")
