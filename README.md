@@ -21,7 +21,7 @@ This DOES NOT download any songs from anywhere.
 * Deezer profile ID of the account from which playlists need to sync from
   * Login to deezer.com
   * Click on your profile
-  * Grab the profile ID from the URLCancel changes
+  * Grab the profile ID from the URL
   *  Example: https://www.deezer.com/us/profile/9999999 - Here 9999999 is the profile ID
 OR
 * Get playlists IDs of playlists you want to sync
