@@ -20,4 +20,4 @@ Gets your spotify and/or deezer playlist(s) and creates playlist(s) in plex with
   * Login to deezer.com
   * Click on your profile
   * Grab the profile ID from the URLCancel changes
-  *  https://www.deezer.com/us/profile/ {profile ID}
+  *  https://www.deezer.com/us/profile/999999 - Here 999999 is the profile ID
