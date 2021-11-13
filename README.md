@@ -30,7 +30,7 @@ OR
 ## Docker Setup
 You need either docker or docker with docker-compose to run this. Docker images are available on [the hub](https://hub.docker.com/r/rnagabhyrava/plexplaylistsync/tags) for amd64, arm64 and arm/v7 and will be auto pulled based on your platform.
 
-Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optinal (1,2,3) fields are required.
+Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optional (1,2,3) fields are required.
 
 ### Docker Run (Untested)
 
