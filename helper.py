@@ -190,13 +190,17 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) 
         tracksList (List):List of plex.audio.track objects
         playlistName (str): Name of the playlist
     """
-    try:
-        plexPlaylist = plex.playlist(playlistName)
-        plexPlaylist.delete()
-        logging.info("Deleted existing playlist %s", playlistName)
-        create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.info("Created playlist %s", playlistName)
+    if tracksList:
+        try:
+            plexPlaylist = plex.playlist(playlistName)
+            plexPlaylist.delete()
+            logging.info("Deleted existing playlist %s", playlistName)
+            create_new_plex_playlist(plex, tracksList, playlistName)
+            logging.info("Created playlist %s", playlistName)
 
-    except NotFound:
-        create_new_plex_playlist(plex, tracksList, playlistName)
-        logging.info("Created playlist %s", playlistName)
+        except NotFound:
+            create_new_plex_playlist(plex, tracksList, playlistName)
+            logging.info("Created playlist %s", playlistName)
+    else:
+        logging.info(
+            "No songs for playlist %s were found on plex, skipping the playlist", playlistName)
