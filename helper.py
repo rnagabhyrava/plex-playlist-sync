@@ -46,6 +46,22 @@ def get_sp_playlist_tracks(sp, userId: str, playlistId: str):
     return tracks
 
 
+def get_sp_playlist_poster_url(sp, playlistId: str):
+    """Returns URL of album art for given playlist
+
+    Args:
+        sp ([type]): Spotify configured instance
+        playlistId (str): Playlist ID
+
+    Returns:
+        url (str): URL for image
+    """
+    try:
+        return sp.playlist(playlistId)['images'][0]['url']
+    except Exception as e:
+        return ""
+
+
 def get_sp_track_names(sp, userId: str, playlistId: str):
     """Returns the track names, artists of the given spotify playlist
 
@@ -59,10 +75,12 @@ def get_sp_track_names(sp, userId: str, playlistId: str):
     """
     trackNames, artistNames = [], []
     tracks = get_sp_playlist_tracks(sp, userId, playlistId)
+    playlist_poster_url = get_sp_playlist_poster_url(sp, playlistId)
+
     for track in tracks:
         trackNames.append(track['track']['name'])
         artistNames.append(track['track']['artists'][0]['name'])
-    return zip(trackNames, artistNames)
+    return zip(trackNames, artistNames), playlist_poster_url
 
 
 ################### Deezer helpers ###################
@@ -103,7 +121,24 @@ def get_dz_playlists_by_ids(dz: deezer.Client(), playlistIds: str):
     return [[playlist.id, playlist.title] for playlist in playlists]
 
 
-def get_dz_playlist_track_names(dz: deezer.Client(), playlistId: str):
+def get_dz_playlist_poster_url(dz: deezer.Client(), playlistId: str):
+    """Returns URL of album art for given playlist
+
+    Args:
+        deezer (deezer.Client): Deezer Client (no credentials needed)
+        playlistId (str): Playlist ID
+
+    Returns:
+        url (str): URL for image
+    """
+
+    try:
+        return dz.get_playlist(playlistId).as_dict()['picture_big']
+    except Exception as e:
+        return ""
+
+
+def get_dz_playlist_tracks(dz: deezer.Client(), playlistId: str):
     """Returns the track names, artists of the given deezer playlist Id
 
     Args:
@@ -115,11 +150,12 @@ def get_dz_playlist_track_names(dz: deezer.Client(), playlistId: str):
     """
     trackNames, artistNames = [], []
     tracks = dz.get_playlist(playlistId).tracks
+    playlist_poster_url = get_dz_playlist_poster_url(dz, playlistId)
     for track in tracks:
         trackNames.append(track.title)
         artistNames.append(track.artist.name)
 
-    return zip(trackNames, artistNames)
+    return zip(trackNames, artistNames), playlist_poster_url
 
 
 ################### Playlist Creation helpers ###################
@@ -181,7 +217,7 @@ def create_new_plex_playlist(plex: PlexServer, tracksList: List, playlistName: s
     plex.createPlaylist(title=playlistName, items=tracksList)
 
 
-def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) -> None:
+def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, posterURL: str) -> None:
     """Deletes existing playlist (if exists) and
     creates a new playlist with given name and playlist name
 
@@ -201,6 +237,11 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str) 
         except NotFound:
             create_new_plex_playlist(plex, tracksList, playlistName)
             logging.info("Created playlist %s", playlistName)
+
+    if posterURL:
+        plexPlaylist = plex.playlist(playlistName)
+        plexPlaylist.uploadPoster(url=posterURL)
+
     else:
         logging.info(
             "No songs for playlist %s were found on plex, skipping the playlist", playlistName)
