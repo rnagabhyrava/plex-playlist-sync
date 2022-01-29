@@ -70,10 +70,11 @@ while True:
             logging.error("No spotify playlists found for given user")
         else:
             for playlist, name in sp_playlists:
-                track_names = get_sp_track_names(sp, SPOTIFY_USER_ID, playlist)
+                track_names, poster_url = get_sp_track_names(
+                    sp, SPOTIFY_USER_ID, playlist)
                 trackList = get_available_plex_tracks(plex, track_names)
                 create_plex_playlist(plex, tracksList=trackList,
-                                     playlistName=name+" - Spotify")
+                                     playlistName=name+" - Spotify", posterURL=poster_url)
             logging.info("Spotify playlist sync complete")
 
     # deezer playlists
@@ -109,10 +110,10 @@ while True:
         logging.error("No deezer playlist code(s) found")
     else:
         for playlist, name in dz_playlists:
-            track_names = get_dz_playlist_track_names(dz, playlist)
-            trackList = get_available_plex_tracks(plex, track_names)
+            tracks, poster_url = get_dz_playlist_tracks(dz, playlist)
+            trackList = get_available_plex_tracks(plex, tracks)
             create_plex_playlist(plex, tracksList=trackList,
-                                 playlistName=name+" - Deezer")
+                                 playlistName=name+" - Deezer", posterURL=poster_url)
         logging.info("Deezer playlist sync complete")
 
     logging.info("All playlist(s) sync complete")
