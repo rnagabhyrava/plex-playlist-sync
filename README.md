@@ -7,6 +7,8 @@ This DOES NOT download any songs from anywhere.
 ## Features
 * From Spotify: Sync all of the given user account's public playlists to plex
 * From Deezer: Sync all of the given user account's public playlists and/or any given public playlist IDs to plex
+### New 
+* (1/29/22) Now automatically pulls playlist poster and adds it to plex playlist
 
 ## Prerequisites
 ### Plex
