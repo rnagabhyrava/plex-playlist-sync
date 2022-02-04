@@ -238,9 +238,13 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
             create_new_plex_playlist(plex, tracksList, playlistName)
             logging.info("Created playlist %s", playlistName)
 
-    if posterURL:
-        plexPlaylist = plex.playlist(playlistName)
-        plexPlaylist.uploadPoster(url=posterURL)
+        if posterURL:
+            try:
+                plexPlaylist = plex.playlist(playlistName)
+                plexPlaylist.uploadPoster(url=posterURL)
+            except NotFound:
+                logging.info(
+                    "No playlist with %s found. Skipping poster addition...", playlistName)
 
     else:
         logging.info(
