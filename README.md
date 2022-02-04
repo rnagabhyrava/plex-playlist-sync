@@ -32,7 +32,7 @@ OR
 ## Docker Setup
 You need either docker or docker with docker-compose to run this. Docker images are available on [the hub](https://hub.docker.com/r/rnagabhyrava/plexplaylistsync/tags) for amd64, arm64 and arm/v7 and will be auto pulled based on your platform.
 
-Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optional (1,2,3) fields are required.
+Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Options (1,2,3) fields are required.
 
 ### Docker Run
 
@@ -41,11 +41,11 @@ docker run -d \
   --name=playlistSync \
   -e PLEX_URL=<your local plex url> \
   -e PLEX_TOKEN=<your plex token> \
-  -e SPOTIFY_CLIENT_ID=<your spotify client id> # Optional 1 \
-  -e SPOTIFY_CLIENT_SECRET=<your spotify client secret> # Optional 1 \
-  -e SPOTIFY_USER_ID=<your spotify user id from the account page> #Optional 1 \
-  -e DEEZER_USER_ID=<your deezer user id> # Optional 2 \
-  -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Optional 3 \
+  -e SPOTIFY_CLIENT_ID=<your spotify client id> # Option 1 \
+  -e SPOTIFY_CLIENT_SECRET=<your spotify client secret> # Option 1 \
+  -e SPOTIFY_USER_ID=<your spotify user id from the account page> # Option 1 \
+  -e DEEZER_USER_ID=<your deezer user id> # Option 2 \
+  -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Option 3 \
   -e SECONDS_TO_WAIT=84000 # Seconds to wait between syncs \
   --restart unless-stopped \
   rnagabhyrava/plexplaylistsync:latest
@@ -64,13 +64,13 @@ services:
     image: rnagabhyrava/plexplaylistsync:latest
     container_name: playlistSync
     environment:
-      - PLEX_URL= <your local plex url>
+      - PLEX_URL=<your local plex url>
       - PLEX_TOKEN=<your plex token>
-      - SPOTIFY_CLIENT_ID=<your spotify client id> # Optional 1
-      - SPOTIFY_CLIENT_SECRET=<your spotify client secret> # Optional 1
-      - SPOTIFY_USER_ID=<your spotify user id> # Optional 1
-      - DEEZER_USER_ID=<your deezer user id> # Optional 2
-      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Optional 3
+      - SPOTIFY_CLIENT_ID=<your spotify client id> # Option 1
+      - SPOTIFY_CLIENT_SECRET=<your spotify client secret> # Option 1
+      - SPOTIFY_USER_ID=<your spotify user id> # Option 1
+      - DEEZER_USER_ID=<your deezer user id> # Option 2
+      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Option 3
       - SECONDS_TO_WAIT=84000 # Seconds to wait between syncs
     restart: unless-stopped
 ```
