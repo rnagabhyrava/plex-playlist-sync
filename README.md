@@ -34,21 +34,25 @@ You need either docker or docker with docker-compose to run this. Docker images 
 
 Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Optional (1,2,3) fields are required.
 
-### Docker Run (Untested)
+### Docker Run
 
 ```
 docker run -d \
   --name=playlistSync \
-  -e PLEX_URL= <your local plex url> \
+  -e PLEX_URL=<your local plex url> \
   -e PLEX_TOKEN=<your plex token> \
   -e SPOTIFY_CLIENT_ID=<your spotify client id> # Optional 1 \
   -e SPOTIFY_CLIENT_SECRET=<your spotify client secret> # Optional 1 \
+  -e SPOTIFY_USER_ID=<your spotify user id from the account page> #Optional 1 \
   -e DEEZER_USER_ID=<your deezer user id> # Optional 2 \
-  -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Optional 3
-  -e SECONDS_TO_WAIT=84000 # Seconds to wait between syncs
+  -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Optional 3 \
+  -e SECONDS_TO_WAIT=84000 # Seconds to wait between syncs \
   --restart unless-stopped \
   rnagabhyrava/plexplaylistsync:latest
 ```
+#### Notes
+- Include `http://` in the PLEX_URL
+- Remove comments (ex: `# Optional x`) before running 
 
 ### Docker Compose
 
