@@ -229,7 +229,7 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
     """
 
     playlistName, suffix = playlistName.rsplit("-", 1)
-    playlistName = re.sub('\W+', ' ', playlistName)
+    playlistName = re.sub('-', ' ', playlistName)
     playlistName = playlistName + " -" + suffix
 
     if tracksList:
