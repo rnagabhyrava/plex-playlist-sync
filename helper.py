@@ -1,4 +1,5 @@
 import logging
+import re
 import sys
 from difflib import SequenceMatcher
 from typing import List
@@ -226,6 +227,11 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
         tracksList (List):List of plex.audio.track objects
         playlistName (str): Name of the playlist
     """
+
+    playlistName, suffix = playlistName.rsplit("-", 1)
+    playlistName = re.sub('\W+', ' ', playlistName)
+    playlistName = playlistName + " -" + suffix
+
     if tracksList:
         try:
             plexPlaylist = plex.playlist(playlistName)
