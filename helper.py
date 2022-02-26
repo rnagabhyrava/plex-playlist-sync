@@ -83,14 +83,16 @@ def get_sp_track_names(sp, userId: str, playlistId: str):
     Returns:
         zip(list, list): A zip object of track name and corresponding artist
     """
-    trackNames, artistNames = [], []
+    trackNames, artistNames, albumNames = [], [], []
     tracks = get_sp_playlist_tracks(sp, userId, playlistId)
-    playlist_poster_url, description = get_sp_playlist_poster_and_description(sp, playlistId)
+    playlist_poster_url, description = get_sp_playlist_poster_and_description(
+        sp, playlistId)
 
     for track in tracks:
         trackNames.append(track['track']['name'])
         artistNames.append(track['track']['artists'][0]['name'])
-    return zip(trackNames, artistNames), playlist_poster_url, description
+        albumNames.append(track['track']['album']['name'])
+    return zip(trackNames, artistNames, albumNames), playlist_poster_url, description
 
 
 ################### Deezer helpers ###################
@@ -166,15 +168,16 @@ def get_dz_playlist_tracks(dz: deezer.Client(), playlistId: str):
     Returns:
         zip(list, list): A zip object of track name and corresponding artist
     """
-    trackNames, artistNames = [], []
+    trackNames, artistNames, albumNames = [], [], []
     tracks = dz.get_playlist(playlistId).tracks
     playlist_poster_url, playlist_description = get_dz_playlist_poster_and_description(
         dz, playlistId)
     for track in tracks:
         trackNames.append(track.title)
         artistNames.append(track.artist.name)
+        albumNames.append(track.album.title)
 
-    return zip(trackNames, artistNames), playlist_poster_url, playlist_description
+    return zip(trackNames, artistNames, albumNames), playlist_poster_url, playlist_description
 
 
 ################### Playlist Creation helpers ###################
@@ -192,7 +195,7 @@ def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
         List: of track objects
     """
     musicTracks = []
-    for track, artist in trackZip:
+    for track, artist, album in trackZip:
         try:
             search = plex.search(track, mediatype='track', limit=5)
         except BadRequest:
@@ -215,7 +218,16 @@ def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
                     artistSimilarity = SequenceMatcher(
                         None, s.artist().title.lower(), artist.lower()
                     ).quick_ratio()
+
                     if s.artist().title.lower() == artist.lower() or artistSimilarity >= 0.8:
+                        musicTracks.extend(s)
+                        break
+
+                    albumSimilarity = SequenceMatcher(
+                        None, s.album().title.lower(), album.lower()
+                    ).quick_ratio()
+
+                    if s.album().title.lower() == album.lower() or albumSimilarity >= 0.8:
                         musicTracks.extend(s)
                         break
 
@@ -248,7 +260,7 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
 
     playlistName, suffix = playlistName.rsplit("-", 1)
     playlistName = re.sub('-', ' ', playlistName)
-    playlistName = playlistName + " -" + suffix
+    playlistName = playlistName + "-" + suffix
 
     if tracksList:
         try:
@@ -273,7 +285,7 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
 
         if description:
             try:
-                plexPlaylist.summary = description
+                plexPlaylist.edit(summary=description)
             except:
                 logging.info(
                     "Failed to add playlist summary for %s. Skipping summary addition...", playlistName)
