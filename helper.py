@@ -47,7 +47,7 @@ def get_sp_playlist_tracks(sp, userId: str, playlistId: str):
     return tracks
 
 
-def get_sp_playlist_poster_url(sp, playlistId: str):
+def get_sp_playlist_poster_and_description(sp, playlistId: str):
     """Returns URL of album art for given playlist
 
     Args:
@@ -57,10 +57,19 @@ def get_sp_playlist_poster_url(sp, playlistId: str):
     Returns:
         url (str): URL for image
     """
+
+    playlistDict = sp.playlist(playlistId)
     try:
-        return sp.playlist(playlistId)['images'][0]['url']
-    except Exception as e:
-        return ""
+        poster = playlistDict['images'][0]['url']
+    except:
+        poster = ""
+
+    try:
+        description = playlistDict['description']
+    except:
+        description = ""
+
+    return (poster, description)
 
 
 def get_sp_track_names(sp, userId: str, playlistId: str):
@@ -74,14 +83,16 @@ def get_sp_track_names(sp, userId: str, playlistId: str):
     Returns:
         zip(list, list): A zip object of track name and corresponding artist
     """
-    trackNames, artistNames = [], []
+    trackNames, artistNames, albumNames = [], [], []
     tracks = get_sp_playlist_tracks(sp, userId, playlistId)
-    playlist_poster_url = get_sp_playlist_poster_url(sp, playlistId)
+    playlist_poster_url, description = get_sp_playlist_poster_and_description(
+        sp, playlistId)
 
     for track in tracks:
         trackNames.append(track['track']['name'])
         artistNames.append(track['track']['artists'][0]['name'])
-    return zip(trackNames, artistNames), playlist_poster_url
+        albumNames.append(track['track']['album']['name'])
+    return zip(trackNames, artistNames, albumNames), playlist_poster_url, description
 
 
 ################### Deezer helpers ###################
@@ -122,7 +133,7 @@ def get_dz_playlists_by_ids(dz: deezer.Client(), playlistIds: str):
     return [[playlist.id, playlist.title] for playlist in playlists]
 
 
-def get_dz_playlist_poster_url(dz: deezer.Client(), playlistId: str):
+def get_dz_playlist_poster_and_description(dz: deezer.Client(), playlistId: str):
     """Returns URL of album art for given playlist
 
     Args:
@@ -132,11 +143,19 @@ def get_dz_playlist_poster_url(dz: deezer.Client(), playlistId: str):
     Returns:
         url (str): URL for image
     """
+    playlistDict = dz.get_playlist(playlistId).as_dict()
 
     try:
-        return dz.get_playlist(playlistId).as_dict()['picture_big']
-    except Exception as e:
-        return ""
+        poster = playlistDict['picture_big']
+    except:
+        poster = ""
+
+    try:
+        description = playlistDict['description']
+    except:
+        description = ""
+
+    return (poster, description)
 
 
 def get_dz_playlist_tracks(dz: deezer.Client(), playlistId: str):
@@ -149,14 +168,16 @@ def get_dz_playlist_tracks(dz: deezer.Client(), playlistId: str):
     Returns:
         zip(list, list): A zip object of track name and corresponding artist
     """
-    trackNames, artistNames = [], []
+    trackNames, artistNames, albumNames = [], [], []
     tracks = dz.get_playlist(playlistId).tracks
-    playlist_poster_url = get_dz_playlist_poster_url(dz, playlistId)
+    playlist_poster_url, playlist_description = get_dz_playlist_poster_and_description(
+        dz, playlistId)
     for track in tracks:
         trackNames.append(track.title)
         artistNames.append(track.artist.name)
+        albumNames.append(track.album.title)
 
-    return zip(trackNames, artistNames), playlist_poster_url
+    return zip(trackNames, artistNames, albumNames), playlist_poster_url, playlist_description
 
 
 ################### Playlist Creation helpers ###################
@@ -174,7 +195,7 @@ def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
         List: of track objects
     """
     musicTracks = []
-    for track, artist in trackZip:
+    for track, artist, album in trackZip:
         try:
             search = plex.search(track, mediatype='track', limit=5)
         except BadRequest:
@@ -197,7 +218,16 @@ def get_available_plex_tracks(plex: PlexServer, trackZip: List) -> List:
                     artistSimilarity = SequenceMatcher(
                         None, s.artist().title.lower(), artist.lower()
                     ).quick_ratio()
+
                     if s.artist().title.lower() == artist.lower() or artistSimilarity >= 0.8:
+                        musicTracks.extend(s)
+                        break
+
+                    albumSimilarity = SequenceMatcher(
+                        None, s.album().title.lower(), album.lower()
+                    ).quick_ratio()
+
+                    if s.album().title.lower() == album.lower() or albumSimilarity >= 0.8:
                         musicTracks.extend(s)
                         break
 
@@ -218,7 +248,7 @@ def create_new_plex_playlist(plex: PlexServer, tracksList: List, playlistName: s
     plex.createPlaylist(title=playlistName, items=tracksList)
 
 
-def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, posterURL: str) -> None:
+def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, posterURL: str, description: str) -> None:
     """Deletes existing playlist (if exists) and
     creates a new playlist with given name and playlist name
 
@@ -230,7 +260,7 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
 
     playlistName, suffix = playlistName.rsplit("-", 1)
     playlistName = re.sub('-', ' ', playlistName)
-    playlistName = playlistName + " -" + suffix
+    playlistName = playlistName + "-" + suffix
 
     if tracksList:
         try:
@@ -244,13 +274,21 @@ def create_plex_playlist(plex: PlexServer, tracksList: List, playlistName: str, 
             create_new_plex_playlist(plex, tracksList, playlistName)
             logging.info("Created playlist %s", playlistName)
 
+        plexPlaylist = plex.playlist(playlistName)
+
         if posterURL:
             try:
-                plexPlaylist = plex.playlist(playlistName)
                 plexPlaylist.uploadPoster(url=posterURL)
             except NotFound:
                 logging.info(
                     "No playlist with %s found. Skipping poster addition...", playlistName)
+
+        if description:
+            try:
+                plexPlaylist.edit(summary=description)
+            except:
+                logging.info(
+                    "Failed to add playlist summary for %s. Skipping summary addition...", playlistName)
 
     else:
         logging.info(
