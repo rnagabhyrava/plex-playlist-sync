@@ -134,3 +134,4 @@ Notebooks/
 
 # files
 *.ipynb
+.*.py
