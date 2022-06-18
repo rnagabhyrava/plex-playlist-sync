@@ -1,5 +1,6 @@
 import csv
 import logging
+import pathlib
 import sys
 from difflib import SequenceMatcher
 from typing import List
@@ -12,14 +13,20 @@ from .helperClasses import Playlist, Track
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
-def _write_csv(tracks: List[Track], name: str) -> None:
+def _write_csv(tracks: List[Track], name: str, path: str = "/data") -> None:
     """Write given tracks with given name as a csv.
 
     Args:
         tracks (List[Track]): List of Track objects
         name (str): Name of the file to write to
     """
-    with open(f"{name}.csv", "w", encoding="utf-8") as csvfile:
+    # pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+
+    data_folder = pathlib.Path(path)
+    data_folder.mkdir(parents=True, exist_ok=True)
+    file = data_folder / f"{name}.csv"
+
+    with open(file, "w", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["title", "artist", "album", "url"])
         for track in tracks:
