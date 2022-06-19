@@ -12,7 +12,7 @@ services:
       - PLEX_TOKEN=<your plex token>
       - WRITE_MISSING_AS_CSV=<1 or 0> # Default 0, 1 = writes missing tracks from each playlist to a csv
       - ADD_PLAYLIST_POSTER=<1 or 0> # Default 1, 1 = add poster for each playlist
-      - ADD_PLAYLIST_DESCRIPTION=<1 or 0> # Default 1, 1 = add poster for each playlist
+      - ADD_PLAYLIST_DESCRIPTION=<1 or 0> # Default 1, 1 = add description for each playlist
       - SPOTIFY_CLIENT_ID=<your spotify client id>
       - SPOTIFY_CLIENT_SECRET=<your spotify client secret>
       - SPOTIFY_USER_ID=<your spotify user id>
