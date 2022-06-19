@@ -96,6 +96,8 @@ def deezer_playlist_sync(
     playlist_ids: str,
     plex: PlexServer,
     save_missing: bool,
+    add_poster: bool,
+    add_description: bool,
 ) -> None:
     """Creates/Updates plex playlists with playlists from deezer
 
@@ -109,6 +111,8 @@ def deezer_playlist_sync(
     if playlists:
         for playlist in playlists:
             tracks = _get_dz_tracks_from_playlist(dz, playlist)
-            update_or_create_plex_playlist(plex, playlist, tracks, save_missing)
+            update_or_create_plex_playlist(
+                plex, playlist, tracks, save_missing, add_poster, add_description
+            )
     else:
         logging.error("No deezer playlists found for given user")

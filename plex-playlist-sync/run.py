@@ -13,8 +13,10 @@ from utils.spotify import spotify_playlist_sync
 # Read ENV variables
 PLEX_URL = os.environ.get("PLEX_URL")
 PLEX_TOKEN = os.environ.get("PLEX_TOKEN")
-print(PLEX_URL)
-WRITE_MISSING_AS_CSV = os.environ.get("WRITE_MISSING_AS_CSV") == "1"
+
+WRITE_MISSING_AS_CSV = os.environ.get("WRITE_MISSING_AS_CSV", "0") == "1"
+ADD_PLAYLIST_POSTER = os.environ.get("ADD_PLAYLIST_POSTER", "1") == "1"
+ADD_PLAYLIST_DESCRIPTION = os.environ.get("ADD_PLAYLIST_DESCRIPTION", "1") == "1"
 
 SPOTIPY_CLIENT_ID = os.environ.get("SPOTIFY_CLIENT_ID")
 SPOTIPY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET")
@@ -61,7 +63,14 @@ while True:
         )
 
     if SP_AUTHSUCCESS:
-        spotify_playlist_sync(sp, SPOTIFY_USER_ID, plex, WRITE_MISSING_AS_CSV)
+        spotify_playlist_sync(
+            sp,
+            SPOTIFY_USER_ID,
+            plex,
+            WRITE_MISSING_AS_CSV,
+            ADD_PLAYLIST_POSTER,
+            ADD_PLAYLIST_DESCRIPTION,
+        )
 
     logging.info("Spotify playlist sync complete")
 
@@ -70,7 +79,13 @@ while True:
     logging.info("Starting Deezer playlist sync")
     dz = deezer.Client()
     deezer_playlist_sync(
-        dz, DEEZER_USER_ID, DEEZER_PLAYLIST_IDS, plex, WRITE_MISSING_AS_CSV
+        dz,
+        DEEZER_USER_ID,
+        DEEZER_PLAYLIST_IDS,
+        plex,
+        WRITE_MISSING_AS_CSV,
+        ADD_PLAYLIST_POSTER,
+        ADD_PLAYLIST_DESCRIPTION,
     )
     logging.info("Deezer playlist sync complete")
 

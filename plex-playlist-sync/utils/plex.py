@@ -118,6 +118,8 @@ def update_or_create_plex_playlist(
     playlist: Playlist,
     tracks: List[Track],
     save_missing: bool = False,
+    add_poster: bool = True,
+    add_description: bool = True,
 ) -> None:
     """If playlist with same name exists, Updates existing playlist,
     else create a new playlist.
@@ -137,9 +139,9 @@ def update_or_create_plex_playlist(
             logging.info("Created playlist %s", playlist.name)
             plex_playlist = plex.playlist(playlist.name)
 
-        if playlist.description:
+        if playlist.description and add_description:
             plex_playlist.edit(summary=playlist.description)
-        if playlist.poster:
+        if playlist.poster and add_poster:
             plex_playlist.uploadPoster(url=playlist.poster)
         logging.info("Updated playlist %s with summary and poster", playlist.name)
 
