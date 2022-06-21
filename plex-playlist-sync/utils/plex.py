@@ -95,7 +95,7 @@ def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
 
 
 def _update_plex_playlist(
-    plex: PlexServer, available_tracks: List, playlist: Playlist
+    plex: PlexServer, available_tracks: List, playlist: Playlist, append: bool = False
 ) -> None:
     """Update existing plex playlist with new tracks and metadata.
 
@@ -108,7 +108,8 @@ def _update_plex_playlist(
         plexapi.playlist: plex playlist object
     """
     plex_playlist = plex.playlist(playlist.name)
-    plex_playlist.removeItems(plex_playlist.items())
+    if not append:
+        plex_playlist.removeItems(plex_playlist.items())
     plex_playlist.addItems(available_tracks)
     return plex_playlist
 
@@ -120,6 +121,7 @@ def update_or_create_plex_playlist(
     save_missing: bool = False,
     add_poster: bool = True,
     add_description: bool = True,
+    append: bool = False,
 ) -> None:
     """If playlist with same name exists, Updates existing playlist,
     else create a new playlist.
@@ -132,7 +134,9 @@ def update_or_create_plex_playlist(
     available_tracks, missing_tracks = _get_available_plex_tracks(plex, tracks)
     if available_tracks:
         try:
-            plex_playlist = _update_plex_playlist(plex, available_tracks, playlist)
+            plex_playlist = _update_plex_playlist(
+                plex, available_tracks, playlist, append
+            )
             logging.info("Updated playlist %s", playlist.name)
         except NotFound:
             plex.createPlaylist(title=playlist.name, items=available_tracks)

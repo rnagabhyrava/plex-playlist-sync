@@ -25,6 +25,7 @@ SPOTIFY_USER_ID = os.environ.get("SPOTIFY_USER_ID")
 DEEZER_USER_ID = os.environ.get("DEEZER_USER_ID")
 DEEZER_PLAYLIST_IDS = os.environ.get("DEEZER_PLAYLIST_ID")
 
+APPEND_INSTEAD_OF_SYNC = os.environ.get("APPEND_INSTEAD_OF_SYNC", False) == "1"
 WAIT_SECONDS = int(os.environ.get("SECONDS_TO_WAIT", 86400))
 
 while True:
@@ -70,6 +71,7 @@ while True:
             WRITE_MISSING_AS_CSV,
             ADD_PLAYLIST_POSTER,
             ADD_PLAYLIST_DESCRIPTION,
+            APPEND_INSTEAD_OF_SYNC,
         )
 
     logging.info("Spotify playlist sync complete")
@@ -86,6 +88,7 @@ while True:
         WRITE_MISSING_AS_CSV,
         ADD_PLAYLIST_POSTER,
         ADD_PLAYLIST_DESCRIPTION,
+        APPEND_INSTEAD_OF_SYNC,
     )
     logging.info("Deezer playlist sync complete")
 

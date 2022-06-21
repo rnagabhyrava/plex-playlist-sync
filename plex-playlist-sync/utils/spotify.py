@@ -76,6 +76,7 @@ def spotify_playlist_sync(
     save_missing: bool,
     add_poster: bool,
     add_description: bool,
+    append: bool,
 ) -> None:
     """Creates/Updates plex playlists with playlists from spotify
 
@@ -89,7 +90,13 @@ def spotify_playlist_sync(
         for playlist in playlists:
             tracks = _get_sp_tracks_from_playlist(sp, user_id, playlist)
             update_or_create_plex_playlist(
-                plex, playlist, tracks, save_missing, add_poster, add_description
+                plex,
+                playlist,
+                tracks,
+                save_missing,
+                add_poster,
+                add_description,
+                append,
             )
     else:
         logging.error("No spotify playlists found for given user")
