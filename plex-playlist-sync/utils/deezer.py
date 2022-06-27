@@ -5,14 +5,13 @@ from plexapi.server import PlexServer
 
 import deezer
 
-from .helperClasses import Playlist, Track
+from .helperClasses import Playlist, Track, UserInputs
 from .plex import update_or_create_plex_playlist
 
 
 def _get_dz_playlists(
     dz: deezer.Client(),
-    user_id: str = None,
-    playlist_ids: str = None,
+    userInputs: UserInputs,
     suffix: str = " - Deezer",
 ) -> List[Playlist]:
     """Get metadata for playlists in the given user_id.
@@ -27,18 +26,18 @@ def _get_dz_playlists(
     """
     dz_user_playlists, dz_id_playlists = [], []
 
-    if user_id:
+    if userInputs.deezer_user_id:
         try:
-            dz_user_playlists = dz.get_user(user_id).get_playlists()
+            dz_user_playlists = dz.get_user(userInputs.deezer_user_id).get_playlists()
         except:
             dz_user_playlists = []
             logging.info(
                 "Can't get playlists from this user, skipping deezer user playlists"
             )
 
-    if playlist_ids:
+    if userInputs.deezer_playlist_ids:
         try:
-            dz_playlist_ids = playlist_ids.split()
+            dz_playlist_ids = userInputs.deezer_playlist_ids.split()
             dz_id_playlists = [dz.get_playlist(id) for id in dz_playlist_ids]
         except:
             dz_id_playlists = []
@@ -91,35 +90,18 @@ def _get_dz_tracks_from_playlist(
 
 
 def deezer_playlist_sync(
-    dz: deezer.Client(),
-    user_id: str,
-    playlist_ids: str,
-    plex: PlexServer,
-    save_missing: bool,
-    add_poster: bool,
-    add_description: bool,
-    append: bool,
+    dz: deezer.Client(), plex: PlexServer, userInputs: UserInputs
 ) -> None:
     """Create/Update plex playlists with playlists from deezer.
 
     Args:
         dz (deezer.Client):  Deezer Client (no credentials needed)
-        user_id (str): UserId of the Deezer account (get it from url of deezer.com -> user profile)
-        playlist_ids (str): deezer playlist ids as space seperated string
         plex (PlexServer): A configured PlexServer instance
     """
-    playlists = _get_dz_playlists(dz, user_id, playlist_ids)
+    playlists = _get_dz_playlists(dz, userInputs)
     if playlists:
         for playlist in playlists:
             tracks = _get_dz_tracks_from_playlist(dz, playlist)
-            update_or_create_plex_playlist(
-                plex,
-                playlist,
-                tracks,
-                save_missing,
-                add_poster,
-                add_description,
-                append,
-            )
+            update_or_create_plex_playlist(plex, playlist, tracks, userInputs)
     else:
         logging.error("No deezer playlists found for given user")

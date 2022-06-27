@@ -8,7 +8,7 @@ from typing import List
 from plexapi.exceptions import BadRequest, NotFound
 from plexapi.server import PlexServer
 
-from .helperClasses import Playlist, Track
+from .helperClasses import Playlist, Track, UserInputs
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -114,13 +114,7 @@ def _update_plex_playlist(
 
 
 def update_or_create_plex_playlist(
-    plex: PlexServer,
-    playlist: Playlist,
-    tracks: List[Track],
-    save_missing: bool = False,
-    add_poster: bool = True,
-    add_description: bool = True,
-    append: bool = False,
+    plex: PlexServer, playlist: Playlist, tracks: List[Track], userInputs: UserInputs
 ) -> None:
     """Update playlist if exists, else create a new playlist.
 
@@ -133,7 +127,10 @@ def update_or_create_plex_playlist(
     if available_tracks:
         try:
             plex_playlist = _update_plex_playlist(
-                plex, available_tracks, playlist, append
+                plex=plex,
+                available_tracks=available_tracks,
+                playlist=playlist,
+                append=userInputs.append_instead_of_sync,
             )
             logging.info("Updated playlist %s", playlist.name)
         except NotFound:
@@ -141,9 +138,9 @@ def update_or_create_plex_playlist(
             logging.info("Created playlist %s", playlist.name)
             plex_playlist = plex.playlist(playlist.name)
 
-        if playlist.description and add_description:
+        if playlist.description and userInputs.add_playlist_description:
             plex_playlist.edit(summary=playlist.description)
-        if playlist.poster and add_poster:
+        if playlist.poster and userInputs.add_playlist_poster:
             plex_playlist.uploadPoster(url=playlist.poster)
         logging.info("Updated playlist %s with summary and poster", playlist.name)
 
@@ -152,7 +149,7 @@ def update_or_create_plex_playlist(
             "No songs for playlist %s were found on plex, skipping the playlist creation",
             playlist.name,
         )
-    if missing_tracks and save_missing:
+    if missing_tracks and userInputs.write_missing_as_csv:
         try:
             _write_csv(missing_tracks, playlist.name)
             logging.info("Missing tracks written to %s.csv", playlist.name)

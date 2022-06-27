@@ -4,7 +4,7 @@ from typing import List
 import spotipy
 from plexapi.server import PlexServer
 
-from .helperClasses import Playlist, Track
+from .helperClasses import Playlist, Track, UserInputs
 from .plex import update_or_create_plex_playlist
 
 
@@ -71,13 +71,7 @@ def _get_sp_tracks_from_playlist(
 
 
 def spotify_playlist_sync(
-    sp: spotipy.Spotify,
-    user_id: str,
-    plex: PlexServer,
-    save_missing: bool,
-    add_poster: bool,
-    add_description: bool,
-    append: bool,
+    sp: spotipy.Spotify, plex: PlexServer, userInputs: UserInputs
 ) -> None:
     """Create/Update plex playlists with playlists from spotify.
 
@@ -86,18 +80,12 @@ def spotify_playlist_sync(
         user_id (str): spotify user id
         plex (PlexServer): A configured PlexServer instance
     """
-    playlists = _get_sp_user_playlists(sp, user_id)
+    playlists = _get_sp_user_playlists(sp, userInputs.spotify_user_id)
     if playlists:
         for playlist in playlists:
-            tracks = _get_sp_tracks_from_playlist(sp, user_id, playlist)
-            update_or_create_plex_playlist(
-                plex,
-                playlist,
-                tracks,
-                save_missing,
-                add_poster,
-                add_description,
-                append,
+            tracks = _get_sp_tracks_from_playlist(
+                sp, userInputs.spotify_user_id, playlist
             )
+            update_or_create_plex_playlist(plex, playlist, tracks, userInputs)
     else:
         logging.error("No spotify playlists found for given user")
