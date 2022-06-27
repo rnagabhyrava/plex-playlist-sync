@@ -11,7 +11,8 @@ from .plex import update_or_create_plex_playlist
 def _get_sp_user_playlists(
     sp: spotipy.Spotify, user_id: str, suffix: str = " - Spotify"
 ) -> List[Playlist]:
-    """Gets metadata for playlists in the given user_id
+    """Get metadata for playlists in the given user_id.
+
     Args:
         sp (spotipy.Spotify): Spotify configured instance
         userId (str): UserId of the spotify account (get it from open.spotify.com/account)
@@ -19,7 +20,6 @@ def _get_sp_user_playlists(
     Returns:
         List[Playlist]: list of Playlist objects with playlist metadata fields
     """
-
     playlists = []
 
     try:
@@ -41,7 +41,8 @@ def _get_sp_user_playlists(
 def _get_sp_tracks_from_playlist(
     sp: spotipy.Spotify, user_id: str, playlist: Playlist
 ) -> List[Track]:
-    """Returns list of tracks with metadata
+    """Return list of tracks with metadata.
+
     Args:
         sp (spotipy.Spotify): Spotify configured instance
         user_id (str): spotify user id
@@ -50,7 +51,7 @@ def _get_sp_tracks_from_playlist(
         List[Track]: list of Track objects with track metadata fields
     """
 
-    def extract_sp_track_metadata(track):
+    def extract_sp_track_metadata(track) -> Track:
         title = track["track"]["name"]
         artist = track["track"]["artists"][0]["name"]
         album = track["track"]["album"]["name"]
@@ -78,7 +79,7 @@ def spotify_playlist_sync(
     add_description: bool,
     append: bool,
 ) -> None:
-    """Creates/Updates plex playlists with playlists from spotify
+    """Create/Update plex playlists with playlists from spotify.
 
     Args:
         sp (spotipy.Spotify): Spotify configured instance

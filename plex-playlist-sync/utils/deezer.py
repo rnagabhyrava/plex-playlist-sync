@@ -15,7 +15,7 @@ def _get_dz_playlists(
     playlist_ids: str = None,
     suffix: str = " - Deezer",
 ) -> List[Playlist]:
-    """Gets metadata for playlists in the given user_id
+    """Get metadata for playlists in the given user_id.
 
     Args:
         dz (deezer.Client): Deezer Client (no credentials needed)
@@ -67,7 +67,7 @@ def _get_dz_tracks_from_playlist(
     dz: deezer.Client(),
     playlist: Playlist,
 ) -> List[Track]:
-    """Returns list of tracks with metadata
+    """Return list of tracks with metadata.
 
     Args:
         dz (deezer.Client): Deezer Client (no credentials needed)
@@ -100,7 +100,7 @@ def deezer_playlist_sync(
     add_description: bool,
     append: bool,
 ) -> None:
-    """Creates/Updates plex playlists with playlists from deezer
+    """Create/Update plex playlists with playlists from deezer.
 
     Args:
         dz (deezer.Client):  Deezer Client (no credentials needed)
