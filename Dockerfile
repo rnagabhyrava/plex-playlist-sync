@@ -10,6 +10,6 @@ RUN pip install -r requirements.txt
 COPY . .
 WORKDIR /app
 
-CMD ["python", "./plex-playlist-sync/run.py"]
+CMD ["python", "usage.py"]
 
 # docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t rnagabhyrava/plexplaylistsync:<tag> --push .
