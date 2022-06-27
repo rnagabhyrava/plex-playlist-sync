@@ -4,9 +4,15 @@ services:
   playlistSync:
     image: rnagabhyrava/plexplaylistsync:latest
     container_name: playlistSync
+    volumes:
+      - ~/missing_tracks:/data
     environment:
       - PLEX_URL=http://192.99.99.99:32400
       - PLEX_TOKEN=qwertyuiop
+      - WRITE_MISSING_AS_CSV=1 # If you want to write missing
+      - ADD_PLAYLIST_POSTER=1 # If you want to add posters for playlists
+      - ADD_PLAYLIST_DESCRIPTION=1 # If you want to add descriptions for playlists
+      - APPEND_INSTEAD_OF_SYNC=0 # If you want to append new instead sync tracks
       - SPOTIFY_CLIENT_ID=qwertyuiop # Optional 1
       - SPOTIFY_CLIENT_SECRET=qwertyuiop # Optional 1
       - SPOTIFY_USER_ID=qwertyuiop # Optional 1
