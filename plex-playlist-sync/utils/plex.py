@@ -34,8 +34,7 @@ def _write_csv(tracks: List[Track], name: str, path: str = "/data") -> None:
 
 
 def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
-    """Search given list of tracks in plex and
-    returns list of tracks available in plex
+    """Search and return list of tracks available in plex.
 
     Args:
         plex (PlexServer): A configured PlexServer instance
@@ -123,8 +122,7 @@ def update_or_create_plex_playlist(
     add_description: bool = True,
     append: bool = False,
 ) -> None:
-    """If playlist with same name exists, Updates existing playlist,
-    else create a new playlist.
+    """Update playlist if exists, else create a new playlist.
 
     Args:
         plex (PlexServer): A configured PlexServer instance
