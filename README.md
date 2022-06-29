@@ -1,6 +1,6 @@
 # Plex Playlist Sync
 
-Grabs an account's spotify and/or deezer playlist(s) and creates playlist(s) in plex with media already available on plex server.
+Create spotify and deezer playlists in your plex account using tracks from your server and keeps plex playlists in sync with original playlists. 
 
 This DOES NOT download any songs from anywhere.
 
