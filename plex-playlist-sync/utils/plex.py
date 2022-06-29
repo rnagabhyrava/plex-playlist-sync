@@ -5,6 +5,7 @@ import sys
 from difflib import SequenceMatcher
 from typing import List
 
+import plexapi
 from plexapi.exceptions import BadRequest, NotFound
 from plexapi.server import PlexServer
 
@@ -30,7 +31,9 @@ def _write_csv(tracks: List[Track], name: str, path: str = "/data") -> None:
         writer = csv.writer(csvfile)
         writer.writerow(["title", "artist", "album", "url"])
         for track in tracks:
-            writer.writerow([track.title, track.artist, track.album, track.url])
+            writer.writerow(
+                [track.title, track.artist, track.album, track.url]
+            )
 
 
 def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
@@ -84,8 +87,9 @@ def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
 
                 except IndexError:
                     logging.info(
-                        "Looks like plex mismatched the search for %s, retrying with next result",
-                        track,
+                        "Looks like plex mismatched the search for %s,"
+                        " retrying with next result",
+                        track.title,
                     )
         if not found:
             missing_tracks.append(track)
@@ -94,17 +98,21 @@ def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
 
 
 def _update_plex_playlist(
-    plex: PlexServer, available_tracks: List, playlist: Playlist, append: bool = False
-) -> None:
+    plex: PlexServer,
+    available_tracks: List,
+    playlist: Playlist,
+    append: bool = False,
+) -> plexapi.playlist.Playlist:
     """Update existing plex playlist with new tracks and metadata.
 
     Args:
         plex (PlexServer): A configured PlexServer instance
         available_tracks (List): list of plex track objects
         playlist (Playlist): Playlist object
+        append (bool): Boolean for Append or sync
 
     Returns:
-        plexapi.playlist: plex playlist object
+        plexapi.playlist.Playlist: plex playlist object
     """
     plex_playlist = plex.playlist(playlist.name)
     if not append:
@@ -114,7 +122,10 @@ def _update_plex_playlist(
 
 
 def update_or_create_plex_playlist(
-    plex: PlexServer, playlist: Playlist, tracks: List[Track], userInputs: UserInputs
+    plex: PlexServer,
+    playlist: Playlist,
+    tracks: List[Track],
+    userInputs: UserInputs,
 ) -> None:
     """Update playlist if exists, else create a new playlist.
 
@@ -142,11 +153,14 @@ def update_or_create_plex_playlist(
             plex_playlist.edit(summary=playlist.description)
         if playlist.poster and userInputs.add_playlist_poster:
             plex_playlist.uploadPoster(url=playlist.poster)
-        logging.info("Updated playlist %s with summary and poster", playlist.name)
+        logging.info(
+            "Updated playlist %s with summary and poster", playlist.name
+        )
 
     else:
         logging.info(
-            "No songs for playlist %s were found on plex, skipping the playlist creation",
+            "No songs for playlist %s were found on plex, skipping the"
+            " playlist creation",
             playlist.name,
         )
     if missing_tracks and userInputs.write_missing_as_csv:
@@ -155,6 +169,7 @@ def update_or_create_plex_playlist(
             logging.info("Missing tracks written to %s.csv", playlist.name)
         except:
             logging.info(
-                "Failed to write missing tracks for %s, likely permission issue",
+                "Failed to write missing tracks for %s, likely permission"
+                " issue",
                 playlist.name,
             )

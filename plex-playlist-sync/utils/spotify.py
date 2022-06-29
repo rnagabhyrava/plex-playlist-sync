@@ -66,7 +66,9 @@ def _get_sp_tracks_from_playlist(
     # If playlist contains more than 100 tracks this loop is useful
     while sp_playlist_tracks["next"]:
         sp_playlist_tracks = sp.next(sp_playlist_tracks)
-        tracks.extend(list(map(extract_sp_track_metadata, sp_playlist_tracks["items"])))
+        tracks.extend(
+            list(map(extract_sp_track_metadata, sp_playlist_tracks["items"]))
+        )
     return tracks
 
 

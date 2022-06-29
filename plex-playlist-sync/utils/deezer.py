@@ -28,11 +28,14 @@ def _get_dz_playlists(
 
     if userInputs.deezer_user_id:
         try:
-            dz_user_playlists = dz.get_user(userInputs.deezer_user_id).get_playlists()
+            dz_user_playlists = dz.get_user(
+                userInputs.deezer_user_id
+            ).get_playlists()
         except:
             dz_user_playlists = []
             logging.info(
-                "Can't get playlists from this user, skipping deezer user playlists"
+                "Can't get playlists from this user, skipping deezer user"
+                " playlists"
             )
 
     if userInputs.deezer_playlist_ids:
@@ -42,7 +45,8 @@ def _get_dz_playlists(
         except:
             dz_id_playlists = []
             logging.info(
-                "Unable to get the playlists from given ids, skipping deezer playlists for IDs"
+                "Unable to get the playlists from given ids, skipping deezer"
+                " playlists for IDs"
             )
 
     dz_playlists = list(set(dz_user_playlists + dz_id_playlists))
