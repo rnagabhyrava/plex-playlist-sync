@@ -30,7 +30,7 @@ def _write_csv(tracks: List[Track], name: str, path: str = "/data") -> None:
 
     with open(file, "w", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(["title", "artist", "album", "url"])
+        writer.writerow(Track.__annotations__.keys())
         for track in tracks:
             writer.writerow(
                 [track.title, track.artist, track.album, track.url]
