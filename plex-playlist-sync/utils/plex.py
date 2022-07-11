@@ -19,7 +19,8 @@ def _write_csv(tracks: List[Track], name: str, path: str = "/data") -> None:
 
     Args:
         tracks (List[Track]): List of Track objects
-        name (str): Name of the file to write to
+        name (str): Name of the file to write
+        path (str): Root directory to write the file
     """
     # pathlib.Path(path).mkdir(parents=True, exist_ok=True)
 
@@ -34,6 +35,18 @@ def _write_csv(tracks: List[Track], name: str, path: str = "/data") -> None:
             writer.writerow(
                 [track.title, track.artist, track.album, track.url]
             )
+
+
+def _delete_csv(name: str, path: str = "/data") -> None:
+    """Delete file associated with given name
+
+    Args:
+        name (str): Name of the file to delete
+        path (str, optional): Root directory to delete the file from
+    """
+    data_folder = pathlib.Path(path)
+    file = data_folder / f"{name}.csv"
+    file.unlink()
 
 
 def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
@@ -171,5 +184,15 @@ def update_or_create_plex_playlist(
             logging.info(
                 "Failed to write missing tracks for %s, likely permission"
                 " issue",
+                playlist.name,
+            )
+    if (not missing_tracks) and userInputs.write_missing_as_csv:
+        try:
+            # Delete playlist created in prev run if no tracks are missing now
+            _delete_csv(playlist.name)
+            logging.info("Deleted old %s.csv", playlist.name)
+        except:
+            logging.info(
+                "Failed to delete %s.csv, likely permission issue",
                 playlist.name,
             )
