@@ -28,9 +28,9 @@ def _get_dz_playlists(
 
     if userInputs.deezer_user_id:
         try:
-            dz_user_playlists = dz.get_user(
-                userInputs.deezer_user_id
-            ).get_playlists()
+            dz_user_playlists = [
+                *dz.get_user(userInputs.deezer_user_id).get_playlists()
+            ]
         except:
             dz_user_playlists = []
             logging.info(
