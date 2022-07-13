@@ -8,7 +8,7 @@ services:
     volumes:
       - <Path where you want to write missing tracks>:/data
     environment:
-      - PLEX_URL= <your local plex url>
+      - PLEX_URL=<your local plex url>
       - PLEX_TOKEN=<your plex token>
       - WRITE_MISSING_AS_CSV=<1 or 0> # Default 0, 1 = writes missing tracks from each playlist to a csv
       - ADD_PLAYLIST_POSTER=<1 or 0> # Default 1, 1 = add poster for each playlist
@@ -19,5 +19,6 @@ services:
       - SPOTIFY_CLIENT_SECRET=<your spotify client secret>
       - SPOTIFY_USER_ID=<your spotify user id>
       - DEEZER_USER_ID=<your spotify user id>
-      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
+      - DEEZER_PLAYLIST_ID=<deezer playlist ids space seperated>
+      - YTM_PLAYLIST_ID=<YTMusic playlist ids space seperated>
     restart: unless-stopped

@@ -1,10 +1,10 @@
 import logging
-from typing import List
+from typing import Dict, List
 
 import spotipy
 from plexapi.server import PlexServer
 
-from .helperClasses import Playlist, Track, UserInputs
+from .helperClasses import Playlist, Track
 from .plex import update_or_create_plex_playlist
 
 
@@ -15,7 +15,8 @@ def _get_sp_user_playlists(
 
     Args:
         sp (spotipy.Spotify): Spotify configured instance
-        userId (str): UserId of the spotify account (get it from open.spotify.com/account)
+        userId (str): UserId of the spotify account
+            (get it from open.spotify.com/account)
         suffix (str): Identifier for source
     Returns:
         List[Playlist]: list of Playlist objects with playlist metadata fields
@@ -73,21 +74,21 @@ def _get_sp_tracks_from_playlist(
 
 
 def spotify_playlist_sync(
-    sp: spotipy.Spotify, plex: PlexServer, userInputs: UserInputs
+    sp: spotipy.Spotify, plex: PlexServer, userInputs: Dict
 ) -> None:
     """Create/Update plex playlists with playlists from spotify.
 
     Args:
         sp (spotipy.Spotify): Spotify configured instance
-        user_id (str): spotify user id
         plex (PlexServer): A configured PlexServer instance
+        userInputs (Dict): Inputs from user
     """
-    playlists = _get_sp_user_playlists(sp, userInputs.spotify_user_id)
+    playlists = _get_sp_user_playlists(sp, userInputs["spotify_user_id"])
     if playlists:
         for playlist in playlists:
             tracks = _get_sp_tracks_from_playlist(
-                sp, userInputs.spotify_user_id, playlist
+                sp, userInputs["spotify_user_id"], playlist
             )
             update_or_create_plex_playlist(plex, playlist, tracks, userInputs)
     else:
-        logging.error("No spotify playlists found for given user")
+        logging.error("No spotify playlists found for given user input")

@@ -19,4 +19,5 @@ services:
       - SPOTIFY_USER_ID=qwertyuiop # Option 1
       - DEEZER_USER_ID=9999999999 # Option 2
       - DEEZER_PLAYLIST_ID=1313621735 1963962142 # Option 3
+      - - YTM_PLAYLIST_ID=playlistId1 playlistId2 # Option 4
     restart: unless-stopped

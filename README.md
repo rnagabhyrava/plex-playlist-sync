@@ -5,13 +5,15 @@ Create spotify and deezer playlists in your plex account using tracks from your 
 This DOES NOT download any songs from anywhere.
 
 ## Features
-* From Spotify: Sync all of the given user account's public playlists to plex
-* From Deezer: Sync all of the given user account's public playlists and/or any given public playlist IDs to plex
-* --- New ---
-* Option to write missing songs as a csv
+* Create or sync yout playlists from:
+  * Spotify: Sync public playlists from user account to plex.
+  * Deezer: Sync public playlists from user account and/or using public playlist IDs to plex.
+  * YT Music: Sync YTM public playlist to plex using playlist IDs.
+* Option to write missing songs as a csv.
 * Option to include poster and description in playlists.
+* Option to append(only way sync) or complete sync playlists.
 
-## Prerequisites
+## Requirements
 ### Plex
 * Plex server's host and port
 * Plex token - [Don't know where to find it?](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/)
@@ -30,10 +32,15 @@ OR
 * Get playlists IDs of playlists you want to sync
   *  Example: https://www.deezer.com/us/playlist/1313621735 - Here 1313621735 is the playlist ID
 
+### To use YT Music sync
+* Get playlists IDs of playlists you want to sync
+  *  Example: https://music.youtube.com/playlist?list=RDCLAK5uy_nmS3YoxSwVVQk9lEQJ0UX4ZCjXsW_psU8 - Here RDCLAK5uy_nmS3YoxSwVVQk9lEQJ0UX4ZCjXsW_psU8 is the playlist ID
+
+
 ## Docker Setup
 You need either docker or docker with docker-compose to run this. Docker images are available on [the hub](https://hub.docker.com/r/rnagabhyrava/plexplaylistsync/tags) for amd64, arm64 and arm/v7 and will be auto pulled based on your platform.
 
-Configure the parameters as needed. Plex URL and TOKEN are mandatory and either one of the Options (1,2,3) fields are required.
+Configure the parameters as needed. Plex URL and TOKEN are mandatory and atleast one of the Options (1,2,3,4) fields are required.
 
 ### Docker Run
 
@@ -51,7 +58,8 @@ docker run -d \
   -e SPOTIFY_CLIENT_SECRET=<your spotify client secret> # Option 1 \
   -e SPOTIFY_USER_ID=<your spotify user id from the account page> # Option 1 \
   -e DEEZER_USER_ID=<your deezer user id> # Option 2 \
-  -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Option 3 \
+  -e DEEZER_PLAYLIST_ID=<deezer playlist ids space seperated> # Option 3 \
+  -e YTM_PLAYLIST_ID=<YTMusic playlist ids space seperated> # Option 4 \
   -v <Path where you want to write missing tracks>:/data \
   --restart unless-stopped \
   rnagabhyrava/plexplaylistsync:latest
@@ -84,7 +92,8 @@ services:
       - SPOTIFY_CLIENT_SECRET=<your spotify client secret>
       - SPOTIFY_USER_ID=<your spotify user id>
       - DEEZER_USER_ID=<your spotify user id>
-      - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
+      - DEEZER_PLAYLIST_ID=<deezer playlist ids space seperated>
+      - YTM_PLAYLIST_ID=<YTMusic playlist ids space seperated>
     restart: unless-stopped
 
 ```

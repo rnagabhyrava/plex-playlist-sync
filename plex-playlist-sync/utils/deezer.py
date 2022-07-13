@@ -1,24 +1,25 @@
 import logging
-from typing import List
+from typing import Dict, List
 
 from plexapi.server import PlexServer
 
 import deezer
 
-from .helperClasses import Playlist, Track, UserInputs
+from .helperClasses import Playlist, Track
 from .plex import update_or_create_plex_playlist
 
 
 def _get_dz_playlists(
-    dz: deezer.Client(),
-    userInputs: UserInputs,
+    dz: deezer.Client,
+    userInputs: Dict,
     suffix: str = " - Deezer",
 ) -> List[Playlist]:
     """Get metadata for playlists in the given user_id.
 
     Args:
         dz (deezer.Client): Deezer Client (no credentials needed)
-        user_id (str): UserId of the Deezer account (get it from url of deezer.com -> user profile)
+        user_id (str): UserId of the Deezer account
+            (get it from url of deezer.com -> user profile)
         playlist_ids (str): deezer playlist ids as space seperated string
         suffix (str): Identifier for source
     Returns:
@@ -26,10 +27,10 @@ def _get_dz_playlists(
     """
     dz_user_playlists, dz_id_playlists = [], []
 
-    if userInputs.deezer_user_id:
+    if userInputs["deezer_user_id"]:
         try:
             dz_user_playlists = [
-                *dz.get_user(userInputs.deezer_user_id).get_playlists()
+                *dz.get_user(userInputs["deezer_user_id"]).get_playlists()
             ]
         except:
             dz_user_playlists = []
@@ -38,9 +39,9 @@ def _get_dz_playlists(
                 " playlists"
             )
 
-    if userInputs.deezer_playlist_ids:
+    if userInputs["deezer_playlist_ids"]:
         try:
-            dz_playlist_ids = userInputs.deezer_playlist_ids.split()
+            dz_playlist_ids = userInputs["deezer_playlist_ids"].split()
             dz_id_playlists = [dz.get_playlist(id) for id in dz_playlist_ids]
         except:
             dz_id_playlists = []
@@ -67,7 +68,7 @@ def _get_dz_playlists(
 
 
 def _get_dz_tracks_from_playlist(
-    dz: deezer.Client(),
+    dz: deezer.Client,
     playlist: Playlist,
 ) -> List[Track]:
     """Return list of tracks with metadata.
@@ -94,13 +95,14 @@ def _get_dz_tracks_from_playlist(
 
 
 def deezer_playlist_sync(
-    dz: deezer.Client(), plex: PlexServer, userInputs: UserInputs
+    dz: deezer.Client, plex: PlexServer, userInputs: Dict
 ) -> None:
     """Create/Update plex playlists with playlists from deezer.
 
     Args:
         dz (deezer.Client):  Deezer Client (no credentials needed)
         plex (PlexServer): A configured PlexServer instance
+        userInputs (Dict): Inputs from user
     """
     playlists = _get_dz_playlists(dz, userInputs)
     if playlists:
@@ -108,4 +110,4 @@ def deezer_playlist_sync(
             tracks = _get_dz_tracks_from_playlist(dz, playlist)
             update_or_create_plex_playlist(plex, playlist, tracks, userInputs)
     else:
-        logging.error("No deezer playlists found for given user")
+        logging.error("No deezer playlists found for given inputs")

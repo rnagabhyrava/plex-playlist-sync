@@ -3,13 +3,13 @@ import logging
 import pathlib
 import sys
 from difflib import SequenceMatcher
-from typing import List
+from typing import Dict, List, Tuple
 
 import plexapi
 from plexapi.exceptions import BadRequest, NotFound
 from plexapi.server import PlexServer
 
-from .helperClasses import Playlist, Track, UserInputs
+from .helperClasses import Playlist, Track
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
@@ -49,7 +49,9 @@ def _delete_csv(name: str, path: str = "/data") -> None:
     file.unlink()
 
 
-def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
+def _get_available_plex_tracks(
+    plex: PlexServer, tracks: List[Track]
+) -> Tuple[List, List]:
     """Search and return list of tracks available in plex.
 
     Args:
@@ -80,24 +82,27 @@ def _get_available_plex_tracks(plex: PlexServer, tracks: List[Track]) -> List:
         if search:
             for s in search:
                 try:
-                    artist_similarity = SequenceMatcher(
-                        None, s.artist().title.lower(), track.artist.lower()
-                    ).quick_ratio()
+                    if s.artist().title and track.artist:
+                        artist_similarity = SequenceMatcher(
+                            None,
+                            s.artist().title.lower(),
+                            track.artist.lower(),
+                        ).quick_ratio()
 
-                    if artist_similarity >= 0.9:
-                        plex_tracks.extend(s)
-                        found = True
-                        break
+                        if artist_similarity >= 0.9:
+                            plex_tracks.extend(s)
+                            found = True
+                            break
 
-                    album_similarity = SequenceMatcher(
-                        None, s.album().title.lower(), track.album.lower()
-                    ).quick_ratio()
+                    if s.album().title and track.album:
+                        album_similarity = SequenceMatcher(
+                            None, s.album().title.lower(), track.album.lower()
+                        ).quick_ratio()
 
-                    if album_similarity >= 0.9:
-                        plex_tracks.extend(s)
-                        found = True
-                        break
-
+                        if album_similarity >= 0.9:
+                            plex_tracks.extend(s)
+                            found = True
+                            break
                 except IndexError:
                     logging.info(
                         "Looks like plex mismatched the search for %s,"
@@ -138,7 +143,7 @@ def update_or_create_plex_playlist(
     plex: PlexServer,
     playlist: Playlist,
     tracks: List[Track],
-    userInputs: UserInputs,
+    userInputs: Dict,
 ) -> None:
     """Update playlist if exists, else create a new playlist.
 
@@ -146,6 +151,7 @@ def update_or_create_plex_playlist(
         plex (PlexServer): A configured PlexServer instance
         available_tracks (List): List of plex.audio.track objects
         playlist (Playlist): Playlist object
+        userInputs (Dict): Inputs from user
     """
     available_tracks, missing_tracks = _get_available_plex_tracks(plex, tracks)
     if available_tracks:
@@ -154,7 +160,7 @@ def update_or_create_plex_playlist(
                 plex=plex,
                 available_tracks=available_tracks,
                 playlist=playlist,
-                append=userInputs.append_instead_of_sync,
+                append=userInputs["append_instead_of_sync"],
             )
             logging.info("Updated playlist %s", playlist.name)
         except NotFound:
@@ -162,9 +168,9 @@ def update_or_create_plex_playlist(
             logging.info("Created playlist %s", playlist.name)
             plex_playlist = plex.playlist(playlist.name)
 
-        if playlist.description and userInputs.add_playlist_description:
+        if playlist.description and userInputs["add_playlist_description"]:
             plex_playlist.edit(summary=playlist.description)
-        if playlist.poster and userInputs.add_playlist_poster:
+        if playlist.poster and userInputs["add_playlist_poster"]:
             plex_playlist.uploadPoster(url=playlist.poster)
         logging.info(
             "Updated playlist %s with summary and poster", playlist.name
@@ -176,7 +182,7 @@ def update_or_create_plex_playlist(
             " playlist creation",
             playlist.name,
         )
-    if missing_tracks and userInputs.write_missing_as_csv:
+    if missing_tracks and userInputs["write_missing_as_csv"]:
         try:
             _write_csv(missing_tracks, playlist.name)
             logging.info("Missing tracks written to %s.csv", playlist.name)
@@ -186,7 +192,7 @@ def update_or_create_plex_playlist(
                 " issue",
                 playlist.name,
             )
-    if (not missing_tracks) and userInputs.write_missing_as_csv:
+    if (not missing_tracks) and userInputs["write_missing_as_csv"]:
         try:
             # Delete playlist created in prev run if no tracks are missing now
             _delete_csv(playlist.name)
