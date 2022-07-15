@@ -61,7 +61,7 @@ def _get_dz_playlists(
                     id=d["id"],
                     name=d["title"] + suffix,
                     description=d.get("description", ""),
-                    poster=d["picture_big"],
+                    poster=d.get("picture_big", ""),
                 )
             )
     return playlists
@@ -86,7 +86,7 @@ def _get_dz_tracks_from_playlist(
         title = track["title"]
         artist = track["artist"]["name"]
         album = track["album"]["title"]
-        url = track["link"]
+        url = track.get("link", "")
         return Track(title, artist, album, url)
 
     dz_playlist_tracks = dz.get_playlist(playlist.id).tracks

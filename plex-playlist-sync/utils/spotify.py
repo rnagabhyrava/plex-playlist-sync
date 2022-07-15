@@ -31,7 +31,10 @@ def _get_sp_user_playlists(
                     id=playlist["uri"],
                     name=playlist["name"] + suffix,
                     description=playlist.get("description", ""),
-                    poster=playlist["images"][0].get("url", ""),
+                    # playlists may not have a poster in such cases return ""
+                    poster=""
+                    if len(playlist["images"]) == 0
+                    else playlist["images"][0].get("url", ""),
                 )
             )
     except:
@@ -56,7 +59,8 @@ def _get_sp_tracks_from_playlist(
         title = track["track"]["name"]
         artist = track["track"]["artists"][0]["name"]
         album = track["track"]["album"]["name"]
-        url = track["track"]["external_urls"]["spotify"]
+        # Tracks may no longer be on spotify in such cases return ""
+        url = track["track"]["external_urls"].get("spotify", "")
         return Track(title, artist, album, url)
 
     sp_playlist_tracks = sp.user_playlist_tracks(user_id, playlist.id)
