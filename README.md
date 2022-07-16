@@ -8,10 +8,10 @@ This DOES NOT download any songs from anywhere.
 * Create or sync yout playlists from:
   * Spotify: Sync public playlists from user account to plex.
   * Deezer: Sync public playlists from user account and/or using public playlist IDs to plex.
-  * YT Music: Sync YTM public playlist to plex using playlist IDs.
+  * YT Music: Sync YTM public playlists to plex using playlist IDs.
 * Option to write missing songs as a csv.
 * Option to include poster and description in playlists.
-* Option to append(only way sync) or complete sync playlists.
+* Option to append(one way sync) or complete sync playlists.
 
 ## Requirements
 ### Plex
@@ -40,7 +40,7 @@ OR
 ## Docker Setup
 You need either docker or docker with docker-compose to run this. Docker images are available on [the hub](https://hub.docker.com/r/rnagabhyrava/plexplaylistsync/tags) for amd64, arm64 and arm/v7 and will be auto pulled based on your platform.
 
-Configure the parameters as needed. Plex URL and TOKEN are mandatory and atleast one of the Options (1,2,3,4) fields are required.
+Configure the parameters as needed. Plex URL and TOKEN are mandatory and atleast one of the Options (1,2,3,4) fields are required. You can remove the optional environment variables that you don't need or leave them empty.
 
 ### Docker Run
 
@@ -66,7 +66,7 @@ docker run -d \
 ```
 #### Notes
 - Include `http://` in the PLEX_URL
-- Remove comments (ex: `# Optional x`) before running 
+- Remove comments (ex: `# Option x`) before running 
 
 ### Docker Compose
 
