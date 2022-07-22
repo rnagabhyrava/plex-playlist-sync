@@ -163,9 +163,20 @@ def update_or_create_plex_playlist(
             plex_playlist = plex.playlist(playlist.name)
 
         if playlist.description and userInputs.add_playlist_description:
-            plex_playlist.edit(summary=playlist.description)
+            try:
+                plex_playlist.edit(summary=playlist.description)
+            except:
+                logging.info(
+                    "Failed to update description for playlist %s",
+                    playlist.name,
+                )
         if playlist.poster and userInputs.add_playlist_poster:
-            plex_playlist.uploadPoster(url=playlist.poster)
+            try:
+                plex_playlist.uploadPoster(url=playlist.poster)
+            except:
+                logging.info(
+                    "Failed to update poster for playlist %s", playlist.name
+                )
         logging.info(
             "Updated playlist %s with summary and poster", playlist.name
         )
