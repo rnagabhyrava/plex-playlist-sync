@@ -10,6 +10,7 @@ services:
       - PLEX_URL=http://192.99.99.99:32400
       - PLEX_TOKEN=qwertyuiop
       - WRITE_MISSING_AS_CSV=1 # If you want to write missing
+      - APPEND_SERVICE_SUFFIX=1 # If you want to append service name to playlist name (e.g., " - Spotify")
       - ADD_PLAYLIST_POSTER=1 # If you want to add posters for playlists
       - ADD_PLAYLIST_DESCRIPTION=1 # If you want to add descriptions for playlists
       - APPEND_INSTEAD_OF_SYNC=0 # If you want to only append new tracks and not remove
