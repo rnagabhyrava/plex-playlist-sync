@@ -43,6 +43,7 @@ docker run -d \
   -e PLEX_URL=<your local plex url> \
   -e PLEX_TOKEN=<your plex token> \
   -e WRITE_MISSING_AS_CSV=<1 or 0> # Default 0, 1 = writes missing tracks from each playlist to a csv
+  -e APPEND_SERVICE_SUFFIX=<1 or 0> # Default 1, 1 = appends the service name to the playlist name
   -e ADD_PLAYLIST_POSTER=<1 or 0> # Default 1, 1 = add poster for each playlist
   -e ADD_PLAYLIST_DESCRIPTION=<1 or 0> # Default 1, 1 = add description for each playlist
   -e APPEND_INSTEAD_OF_SYNC=0 # Default 0, 1 = Sync tracks, 0 = Append only
@@ -76,6 +77,7 @@ services:
       - PLEX_URL= <your local plex url>
       - PLEX_TOKEN=<your plex token>
       - WRITE_MISSING_AS_CSV=<1 or 0> # Default 0, 1 = writes missing tracks from each playlist to a csv
+      - APPEND_SERVICE_SUFFIX=<1 or 0> # Default 1, 1 = appends the service name to the playlist name
       - ADD_PLAYLIST_POSTER=<1 or 0> # Default 1, 1 = add poster for each playlist
       - ADD_PLAYLIST_DESCRIPTION=<1 or 0> # Default 1, 1 = add description for each playlist
       - APPEND_INSTEAD_OF_SYNC=0 # Default 0, 1 = Sync tracks, 0 = Append only
