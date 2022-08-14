@@ -23,6 +23,7 @@ class UserInputs:
     plex_token: str
 
     write_missing_as_csv: bool
+    append_service_suffix: bool
     add_playlist_poster: bool
     add_playlist_description: bool
     append_instead_of_sync: bool
