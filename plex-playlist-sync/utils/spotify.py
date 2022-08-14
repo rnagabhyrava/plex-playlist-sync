@@ -97,7 +97,10 @@ def spotify_playlist_sync(
         plex (PlexServer): A configured PlexServer instance
     """
     playlists = _get_sp_user_playlists(
-        sp, userInputs.spotify_user_id, " - Spotify" if userInputs.append_service_suffix else "")
+        sp,
+        userInputs.spotify_user_id,
+        " - Spotify" if userInputs.append_service_suffix else "",
+    )
     if playlists:
         for playlist in playlists:
             tracks = _get_sp_tracks_from_playlist(

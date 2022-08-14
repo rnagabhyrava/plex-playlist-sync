@@ -103,7 +103,8 @@ def deezer_playlist_sync(
         plex (PlexServer): A configured PlexServer instance
     """
     playlists = _get_dz_playlists(
-        dz, userInputs, " - Deezer" if userInputs.append_service_suffix else "")
+        dz, userInputs, " - Deezer" if userInputs.append_service_suffix else ""
+    )
     if playlists:
         for playlist in playlists:
             tracks = _get_dz_tracks_from_playlist(dz, playlist)
