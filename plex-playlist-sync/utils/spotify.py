@@ -7,8 +7,6 @@ from plexapi.server import PlexServer
 from .helperClasses import Playlist, Track, UserInputs
 from .plex import update_or_create_plex_playlist
 
-import re
-
 
 def _get_sp_user_playlists(
     sp: spotipy.Spotify, user_id: str, suffix: str = " - Spotify"
