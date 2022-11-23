@@ -164,7 +164,8 @@ def update_or_create_plex_playlist(
 
         if playlist.description and userInputs.add_playlist_description:
             try:
-                plex_playlist.edit(summary=playlist.description)
+                description = re.sub("""(<a href="(.*?)">)|(</a>)""", "", playlist.description)
+                plex_playlist.edit(summary=description)
             except:
                 logging.info(
                     "Failed to update description for playlist %s",
