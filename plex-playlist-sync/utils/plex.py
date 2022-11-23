@@ -2,6 +2,7 @@ import csv
 import logging
 import pathlib
 import sys
+import re
 from difflib import SequenceMatcher
 from typing import List
 
