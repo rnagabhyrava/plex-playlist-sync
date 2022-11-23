@@ -2,6 +2,7 @@ import csv
 import logging
 import pathlib
 import sys
+import re
 from difflib import SequenceMatcher
 from typing import List
 
@@ -164,7 +165,8 @@ def update_or_create_plex_playlist(
 
         if playlist.description and userInputs.add_playlist_description:
             try:
-                plex_playlist.edit(summary=playlist.description)
+                description = re.sub("""(<a href="(.*?)">)|(</a>)""", "", playlist.description)
+                plex_playlist.edit(summary=description)
             except:
                 logging.info(
                     "Failed to update description for playlist %s",
