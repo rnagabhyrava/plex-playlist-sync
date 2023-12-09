@@ -53,6 +53,7 @@ docker run -d \
   -e SPOTIFY_USER_ID=<your spotify user id from the account page> # Option 1 \
   -e DEEZER_USER_ID=<your deezer user id> # Option 2 \
   -e DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated> # Option 3 \
+  -e CRON=<1 or 0> # Default 0, 1 = run one time and exit, 0 = run forever \
   -v <Path where you want to write missing tracks>:/data \
   --restart unless-stopped \
   rnagabhyrava/plexplaylistsync:latest
@@ -87,6 +88,7 @@ services:
       - SPOTIFY_USER_ID=<your spotify user id>
       - DEEZER_USER_ID=<your spotify user id>
       - DEEZER_PLAYLIST_ID= #<deezer playlist ids space seperated>
+      - CRON=<1 or 0> # Default 0, 1 = run one time and exit, 0 = run forever
     restart: unless-stopped
 
 ```

@@ -26,6 +26,7 @@ userInputs = UserInputs(
     spotify_user_id=os.getenv("SPOTIFY_USER_ID"),
     deezer_user_id=os.getenv("DEEZER_USER_ID"),
     deezer_playlist_ids=os.getenv("DEEZER_PLAYLIST_ID"),
+    run_as_cron=os.getenv("CRON", "0") == "1",
 )
 while True:
     logging.info("Starting playlist sync")
@@ -81,6 +82,10 @@ while True:
     logging.info("Deezer playlist sync complete")
 
     logging.info("All playlist(s) sync complete")
-    logging.info("sleeping for %s seconds" % userInputs.wait_seconds)
-
-    time.sleep(userInputs.wait_seconds)
+    
+    if userInputs.run_as_cron:
+        logging.info("run_as_cron is set to True, exiting")
+        break
+    else:
+        logging.info("sleeping for %s seconds" % userInputs.wait_seconds)
+        time.sleep(userInputs.wait_seconds)
