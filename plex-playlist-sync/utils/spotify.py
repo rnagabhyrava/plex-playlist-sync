@@ -24,18 +24,23 @@ def _get_sp_user_playlists(
 
     try:
         sp_playlists = sp.user_playlists(user_id)
-        for playlist in sp_playlists["items"]:
-            playlists.append(
-                Playlist(
-                    id=playlist["uri"],
-                    name=playlist["name"] + suffix,
-                    description=playlist.get("description", ""),
-                    # playlists may not have a poster in such cases return ""
-                    poster=""
-                    if len(playlist["images"]) == 0
-                    else playlist["images"][0].get("url", ""),
+        while sp_playlists:
+            for playlist in sp_playlists['items']:
+                playlists.append(
+                    Playlist(
+                        id=playlist["uri"],
+                        name=playlist["name"] + suffix,
+                        description=playlist.get("description", ""),
+                        # playlists may not have a poster in such cases return ""
+                        poster=""
+                        if len(playlist["images"]) == 0
+                        else playlist["images"][0].get("url", ""),
+                    )
                 )
-            )
+            if sp_playlists['next']:
+                sp_playlists = sp.next(sp_playlists)
+            else:
+                sp_playlists = None
     except:
         logging.error("Spotify User ID Error")
     return playlists
